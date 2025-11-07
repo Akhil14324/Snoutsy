@@ -3,289 +3,617 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login / Sign Up</title>
-  <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800,900" rel="stylesheet" />
-  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+  <title>Login/Signup</title>
+
+  <!-- Boxicons -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAZnkTV-mK0F7Q4Fm5OeK_vRPHFgGt6Gms",
+      authDomain: "snoutsy-df81c.firebaseapp.com",
+      projectId: "snoutsy-df81c",
+      storageBucket: "snoutsy-df81c.firebasestorage.app",
+      messagingSenderId: "636456747643",
+      appId: "1:636456747643:web:f62ed4b7fe0b3217b998de",
+      measurementId: "G-G13VVSSN6F"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    
+    // Set language code
+    auth.languageCode = 'en';
+    
+    // Make auth and provider available globally
+    window.firebaseAuth = auth;
+    window.googleProvider = provider;
+  </script>
 
   <style>
+    :root {
+      --primary-color: #4EA685;
+      --secondary-color: #57B894;
+      --black: #000000;
+      --white: #ffffff;
+      --gray: #efefef;
+      --gray-2: #757575;
+
+      --facebook-color: #4267B2;
+      --google-color: #DB4437;
+      --twitter-color: #1DA1F2;
+      --insta-color: #E1306C;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
+
     * {
+      font-family: 'Poppins', sans-serif;
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
+    html,
     body {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 300;
-      font-size: 15px;
-      line-height: 1.7;
-      color: #c4c3ca;
-      background-color: #e3e3e3;
       height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    a {
-      cursor: pointer;
-      transition: all 200ms linear;
-    }
-    a:hover {
-      text-decoration: none;
-    }
-    .link { color: #c4c3ca; }
-    .link:hover { color: #ffeba7; }
-    p {
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 1.7;
-    }
-    h4 {
-      font-weight: 600;
-    }
-    h6 span {
-  padding: 0 20px;
-  text-transform: uppercase;
-  font-weight: 800;
-  color: #102770;
-}
-
-    .checkbox:checked,
-    .checkbox:not(:checked) {
-      position: absolute;
-      left: -9999px;
-    }
-    .checkbox:checked + label,
-    .checkbox:not(:checked) + label {
-      position: relative;
-      display: block;
-      text-align: center;
-      width: 60px;
-      height: 16px;
-      border-radius: 8px;
-      margin: 10px auto;
-      cursor: pointer;
-      background-color: #ffeba7;
-    }
-    .checkbox:checked + label:before,
-.checkbox:not(:checked) + label:before {
-  position: absolute;
-  display: block;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background-color: #102770;
-  color: #ffeba7;
-  font-family: 'LineIcons'; /* 🔥 THIS is the correct font name */
-  content: "\ea6e"; /* ✅ Correct icon: uil-arrow-right */
-  z-index: 20;
-  top: -10px;
-  left: -10px;
-  line-height: 36px;
-  text-align: center;
-  font-size: 24px;
-  transition: all 0.5s ease;
-}
-
-.checkbox:checked + label:before {
-  transform: translateX(44px) rotate(-270deg);
-  content: "\ea60"; /* ✅ Left arrow when checked */
-}
-
-
-
-    .card-3d-wrap {
-      position: relative;
-      width: 440px;
-      max-width: 100%;
-      height: 400px;
-      transform-style: preserve-3d;
-      perspective: 800px;
-      margin-top: 20px;
-    }
-    .card-3d-wrapper {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform-style: preserve-3d;
-      transition: all 600ms ease-out;
-    }
-    .card-front, .card-back {
-      width: 100%;
-      height: 100%;
-      background-color: #2a2b38;
-      background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/1462889/pat.svg');
-      background-position: bottom center;
-      background-repeat: no-repeat;
-      background-size: 300%;
-      position: absolute;
-      border-radius: 6px;
-      left: 0;
-      top: 0;
-      backface-visibility: hidden;
-    }
-    .card-back {
-      transform: rotateY(180deg);
-    }
-    .checkbox:checked ~ .card-3d-wrap .card-3d-wrapper {
-      transform: rotateY(180deg);
-    }
-    .center-wrap {
-      position: absolute;
-      width: 100%;
-      padding: 0 35px;
-      top: 50%;
-      left: 0;
-      transform: translate3d(0, -50%, 35px) perspective(100px);
-      z-index: 20;
-    }
-
-    .form-group {
-      position: relative;
-      margin: 0;
-      padding: 0;
-    }
-    .form-style {
-      padding: 13px 20px 13px 55px;
-      height: 48px;
-      width: 100%;
-      font-weight: 500;
-      border-radius: 4px;
-      font-size: 14px;
-      line-height: 22px;
-      letter-spacing: 0.5px;
-      outline: none;
-      color: #c4c3ca;
-      background-color: #1f2029;
-      border: none;
-      box-shadow: 0 4px 8px rgba(21,21,21,.2);
-      transition: all 200ms linear;
-    }
-    .form-style:focus {
-      box-shadow: 0 4px 8px rgba(21,21,21,.2);
-    }
-    .input-icon {
-      position: absolute;
-      top: 0;
-      left: 18px;
-      height: 48px;
-      font-size: 24px;
-      line-height: 48px;
-      color: #ffeba7;
-    }
-
-    .btn {
-      border-radius: 4px;
-      height: 44px;
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      transition: all 200ms linear;
-      padding: 0 30px;
-      letter-spacing: 1px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      border: none;
-      background-color: #ffeba7;
-      color: #102770;
-      box-shadow: 0 8px 24px rgba(255,235,167,.2);
-      margin-top: 20px;
-    }
-    .btn:active, .btn:focus, .btn:hover {
-      background-color: #102770;
-      color: #ffeba7;
-      box-shadow: 0 8px 24px rgba(16,39,112,.2);
-    }
-
-    h6 {
-      margin-bottom: 0;
-      padding-bottom: 10px;
-      text-align: center;
-	   font-size: 22px; /* Increase this as you like */
-  font-weight: 800;
-  letter-spacing: 1px;
-  margin-bottom: 20px;
-    }
-
-    .logo {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      z-index: 999;
-    }
-    .logo img {
-      height: 26px;
+      overflow: hidden;
     }
 
     .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
     }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      height: 100vh;
+    }
+
+    .col {
+      width: 50%;
+    }
+
+    .align-items-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .form-wrapper {
+      width: 100%;
+      max-width: 28rem;
+    }
+
+    .form {
+      padding: 1rem;
+      background-color: var(--white);
+      border-radius: 1.5rem;
+      width: 100%;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      transform: scale(0);
+      transition: .5s ease-in-out;
+      transition-delay: 1s;
+    }
+
+    .input-group {
+      position: relative;
+      width: 100%;
+      margin: 1rem 0;
+    }
+
+    .input-group i {
+      position: absolute;
+      top: 50%;
+      left: 1rem;
+      transform: translateY(-50%);
+      font-size: 1.4rem;
+      color: var(--gray-2);
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 1rem 3rem;
+      font-size: 1rem;
+      background-color: var(--gray);
+      border-radius: .5rem;
+      border: 0.125rem solid var(--white);
+      outline: none;
+    }
+
+    .input-group input:focus {
+      border: 0.125rem solid var(--primary-color);
+    }
+
+    .form button {
+      cursor: pointer;
+      width: 100%;
+      padding: .6rem 0;
+      border-radius: .5rem;
+      border: none;
+      background-color: var(--primary-color);
+      color: var(--white);
+      font-size: 1.2rem;
+      outline: none;
+    }
+
+    .form p {
+      margin: 1rem 0;
+      font-size: .7rem;
+    }
+
+    .flex-col {
+      flex-direction: column;
+    }
+
+    .social-list {
+      margin: 2rem 0;
+      padding: 1rem;
+      border-radius: 1.5rem;
+      width: 100%;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      transform: scale(0);
+      transition: .5s ease-in-out;
+      transition-delay: 1.2s;
+    }
+
+    .social-list>div {
+      color: var(--white);
+      margin: 0 .5rem;
+      padding: .7rem;
+      cursor: pointer;
+      border-radius: .5rem;
+      cursor: pointer;
+      transform: scale(0);
+      transition: .5s ease-in-out;
+    }
+
+    .social-list>div:nth-child(1) {
+      transition-delay: 1.4s;
+    }
+
+    .social-list>div:nth-child(2) {
+      transition-delay: 1.6s;
+    }
+
+    .social-list>div:nth-child(3) {
+      transition-delay: 1.8s;
+    }
+
+    .social-list>div:nth-child(4) {
+      transition-delay: 2s;
+    }
+
+    .social-list>div>i {
+      font-size: 1.5rem;
+      transition: .4s ease-in-out;
+    }
+
+    .social-list>div:hover i {
+      transform: scale(1.5);
+    }
+
+    .facebook-bg {
+      background-color: var(--facebook-color);
+    }
+
+    .google-bg {
+      background-color: var(--google-color);
+    }
+
+    .twitter-bg {
+      background-color: var(--twitter-color);
+    }
+
+    .insta-bg {
+      background-color: var(--insta-color);
+    }
+
+    .pointer {
+      cursor: pointer;
+    }
+
+    .container.sign-in .form.sign-in,
+    .container.sign-in .social-list.sign-in,
+    .container.sign-in .social-list.sign-in>div,
+    .container.sign-up .form.sign-up,
+    .container.sign-up .social-list.sign-up,
+    .container.sign-up .social-list.sign-up>div {
+      transform: scale(1);
+    }
+
+    .content-row {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 6;
+      width: 100%;
+    }
+
+    .text {
+      margin: 4rem;
+      color: var(--white);
+    }
+
+    .text h2 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin: 2rem 0;
+      transition: 1s ease-in-out;
+    }
+
+    .text p {
+      font-weight: 600;
+      transition: 1s ease-in-out;
+      transition-delay: .2s;
+    }
+
+    .img img {
+      width: 30vw;
+      transition: 1s ease-in-out;
+      transition-delay: .4s;
+    }
+
+    .text.sign-in h2,
+    .text.sign-in p,
+    .img.sign-in img {
+      transform: translateX(-250%);
+    }
+
+    .text.sign-up h2,
+    .text.sign-up p,
+    .img.sign-up img {
+      transform: translateX(250%);
+    }
+
+    .container.sign-in .text.sign-in h2,
+    .container.sign-in .text.sign-in p,
+    .container.sign-in .img.sign-in img,
+    .container.sign-up .text.sign-up h2,
+    .container.sign-up .text.sign-up p,
+    .container.sign-up .img.sign-up img {
+      transform: translateX(0);
+    }
+
+    /* BACKGROUND */
+    .container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: 300vw;
+      transform: translate(35%, 0);
+      background-image: linear-gradient(-45deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      transition: 1s ease-in-out;
+      z-index: 6;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      border-bottom-right-radius: max(50vw, 50vh);
+      border-top-left-radius: max(50vw, 50vh);
+    }
+
+    .container.sign-in::before {
+      transform: translate(0, 0);
+      right: 50%;
+    }
+
+    .container.sign-up::before {
+      transform: translate(100%, 0);
+      right: 50%;
+    }
+
+    /* RESPONSIVE */
+    @media only screen and (max-width: 425px) {
+      .container::before,
+      .container.sign-in::before,
+      .container.sign-up::before {
+        height: 100vh;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: 0;
+        z-index: 0;
+        transform: none;
+        right: 0;
+      }
+
+      .container.sign-in .col.sign-in,
+      .container.sign-up .col.sign-up {
+        transform: translateY(0);
+      }
+
+      .content-row {
+        align-items: flex-start !important;
+      }
+
+      .content-row .col {
+        transform: translateY(0);
+        background-color: unset;
+      }
+
+      .col {
+        width: 100%;
+        position: absolute;
+        padding: 2rem;
+        background-color: var(--white);
+        border-top-left-radius: 2rem;
+        border-top-right-radius: 2rem;
+        transform: translateY(100%);
+        transition: 1s ease-in-out;
+      }
+
+      .row {
+        align-items: flex-end;
+        justify-content: flex-end;
+      }
+
+      .form,
+      .social-list {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .text {
+        margin: 0;
+      }
+
+      .text p {
+        display: none;
+      }
+
+      .text h2 {
+        margin: .5rem;
+        font-size: 2rem;
+      }
+    }
+  #googleLoginBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* spacing between logo and text */
+  width: 100%;
+  padding: 0.6rem 0;
+  border-radius: 0.5rem;
+  border: 1px solid #dadce0;
+  background-color: #ffffff;
+  color: #444;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 0.8rem; /* 👈 adds space from "Sign in" button */
+}
+
+.google-btn img {
+  width: 16px;
+  height: 16px;
+}
+
+
+
+
 
   </style>
 </head>
+
+
 <body>
-
-  <a href="https://front.codes/" class="logo" target="_blank">
-    <img src="https://assets.codepen.io/1462889/fcy.png" alt="">
-  </a>
-
-  <div class="container">
-    <h6><span>Log In </span><span>Sign Up</span></h6>
-    <input class="checkbox" type="checkbox" id="reg-log" name="reg-log"/>
-    <label for="reg-log"></label>
-
-    <div class="card-3d-wrap">
-      <div class="card-3d-wrapper">
-        <!-- FRONT -->
-        <div class="card-front">
-          <div class="center-wrap">
-            <div class="section text-center">
-              <h4 class="mb-4 pb-3">Log In</h4>
-              <div class="form-group">
-                <input type="email" name="logemail" class="form-style" placeholder="Your Email" id="logemail" autocomplete="off">
-                <i class="input-icon uil uil-at"></i>
-              </div>
-              <div class="form-group mt-2">
-                <input type="password" name="logpass" class="form-style" placeholder="Your Password" id="logpass" autocomplete="off">
-                <i class="input-icon uil uil-lock-alt"></i>
-              </div>
-              <a href="#" class="btn">Submit</a>
-              <p class="mb-0 mt-4 text-center"><a href="#0" class="link">Forgot your password?</a></p>
+  <div id="container" class="container">
+    <!-- FORM SECTION -->
+    <div class="row">
+      <!-- SIGN UP -->
+      <div class="col align-items-center flex-col sign-up">
+        <div class="form-wrapper align-items-center">
+          <div class="form sign-up">
+            <div class="input-group">
+              <i class='bx bxs-user'></i>
+              <input type="text" placeholder="Username">
             </div>
+            <div class="input-group">
+              <i class='bx bx-mail-send'></i>
+              <input type="email" placeholder="Email">
+            </div>
+            <div class="input-group">
+              <i class='bx bxs-lock-alt'></i>
+              <input type="password" placeholder="Password">
+            </div>
+            <div class="input-group">
+              <i class='bx bxs-lock-alt'></i>
+              <input type="password" placeholder="Confirm password">
+            </div>
+            <button>Sign up</button>
+            <p>
+              <span>Already have an account?</span>
+              <b onclick="toggle()" class="pointer">Sign in here</b>
+            </p>
           </div>
         </div>
-
-        <!-- BACK -->
-        <div class="card-back">
-          <div class="center-wrap">
-            <div class="section text-center">
-              <h4 class="mb-4 pb-3">Sign Up</h4>
-              <div class="form-group">
-                <input type="text" name="logname" class="form-style" placeholder="Your Full Name" id="logname" autocomplete="off">
-                <i class="input-icon uil uil-user"></i>
-              </div>
-              <div class="form-group mt-2">
-                <input type="email" name="logemail" class="form-style" placeholder="Your Email" id="logemail2" autocomplete="off">
-                <i class="input-icon uil uil-at"></i>
-              </div>
-              <div class="form-group mt-2">
-                <input type="password" name="logpass" class="form-style" placeholder="Your Password" id="logpass2" autocomplete="off">
-                <i class="input-icon uil uil-lock-alt"></i>
-              </div>
-              <a href="#" class="btn">Submit</a>
-            </div>
-          </div>
-        </div>
-
       </div>
+      <!-- END SIGN UP -->
+
+      <!-- SIGN IN -->
+      <div class="col align-items-center flex-col sign-in">
+        <div class="form-wrapper align-items-center">
+          <div class="form sign-in">
+            <div class="input-group">
+              <i class='bx bxs-user'></i>
+              <input type="text" placeholder="Username">
+            </div>
+            <div class="input-group">
+              <i class='bx bxs-lock-alt'></i>
+              <input type="password" placeholder="Password">
+            </div>
+            <button>Sign in</button>
+             <!-- GOOGLE LOGIN BUTTON -->
+  <button id="googleLoginBtn" class="btn google-btn">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+    Sign in with Google
+  </button>
+            <p><b>Forgot password?</b></p>
+            <p>
+              <span>Don't have an account?</span>
+              <b onclick="toggle()" class="pointer">Sign up here</b>
+            </p>
+          </div>
+        </div>
+        <div class="form-wrapper"></div>
+      </div>
+      <!-- END SIGN IN -->
     </div>
+    <!-- END FORM SECTION -->
+
+    <!-- CONTENT SECTION -->
+    <div class="row content-row">
+      <!-- SIGN IN CONTENT -->
+      <div class="col align-items-center flex-col">
+        <div class="text sign-in">
+          <h2>Welcome</h2>
+        </div>
+        <div class="img sign-in"></div>
+      </div>
+      <!-- END SIGN IN CONTENT -->
+
+      <!-- SIGN UP CONTENT -->
+      <div class="col align-items-center flex-col">
+        <div class="img sign-up"></div>
+        <div class="text sign-up">
+          <h2>Join with us</h2>
+        </div>
+      </div>
+      <!-- END SIGN UP CONTENT -->
+    </div>
+    <!-- END CONTENT SECTION -->
   </div>
+
+  <script>
+    let container = document.getElementById('container')
+
+    toggle = () => {
+      container.classList.toggle('sign-in')
+      container.classList.toggle('sign-up')
+    }
+
+    setTimeout(() => {
+      container.classList.add('sign-in')
+    }, 200)
+  </script>
+
+  <!-- Firebase Google OAuth Implementation -->
+  <script type="module">
+    import { signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    
+    // Wait for Firebase to be initialized
+    const initGoogleLogin = () => {
+      // Check if Firebase is initialized
+      if (!window.firebaseAuth || !window.googleProvider) {
+        console.warn('Firebase not initialized yet, retrying...');
+        setTimeout(initGoogleLogin, 200);
+        return;
+      }
+
+      const googleLoginBtn = document.getElementById('googleLoginBtn');
+      
+      if (!googleLoginBtn) {
+        console.error('Google login button not found');
+        return;
+      }
+
+      // Add click event listener to Google login button
+      googleLoginBtn.addEventListener('click', async () => {
+        try {
+          // Show loading state
+          googleLoginBtn.disabled = true;
+          const originalContent = googleLoginBtn.innerHTML;
+          googleLoginBtn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo"> Signing in...';
+          
+          // Sign in with Google
+          const result = await signInWithPopup(window.firebaseAuth, window.googleProvider);
+          const user = result.user;
+          
+          // Success - user is signed in
+          console.log('User signed in:', user);
+          
+          // Store user info in localStorage
+          localStorage.setItem('user', JSON.stringify({
+            uid: user.uid,
+            displayName: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL
+          }));
+          
+          // Show success message
+          alert(`Welcome, ${user.displayName}! You have successfully signed in with Google.`);
+          
+          // Redirect to home page or dashboard
+          window.location.href = '../index.html';
+          
+        } catch (error) {
+          // Handle errors
+          console.error('Google sign-in error:', error);
+          
+          // Reset button state
+          googleLoginBtn.disabled = false;
+          googleLoginBtn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo"> Sign in with Google';
+          
+          // Show error message
+          let errorMessage = 'An error occurred during sign-in.';
+          
+          if (error.code === 'auth/popup-closed-by-user') {
+            errorMessage = 'Sign-in popup was closed. Please try again.';
+          } else if (error.code === 'auth/cancelled-popup-request') {
+            errorMessage = 'Sign-in was cancelled. Please try again.';
+          } else if (error.code === 'auth/popup-blocked') {
+            errorMessage = 'Popup was blocked by browser. Please allow popups and try again.';
+          } else if (error.code === 'auth/network-request-failed') {
+            errorMessage = 'Network error. Please check your internet connection.';
+          } else if (error.code === 'auth/account-exists-with-different-credential') {
+            errorMessage = 'An account already exists with this email. Please use a different sign-in method.';
+          }
+          
+          alert(errorMessage);
+        }
+      });
+    };
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(initGoogleLogin, 300); // Wait for Firebase to initialize
+      });
+    } else {
+      setTimeout(initGoogleLogin, 300);
+    }
+
+    // Monitor auth state changes (wait for Firebase to be ready)
+    const checkAuthState = () => {
+      if (window.firebaseAuth) {
+        onAuthStateChanged(window.firebaseAuth, (user) => {
+          if (user) {
+            console.log('User is signed in:', user);
+          } else {
+            console.log('User is signed out');
+          }
+        });
+      } else {
+        setTimeout(checkAuthState, 200);
+      }
+    };
+    checkAuthState();
+  </script>
+
+
 
 </body>
 </html>
+
+<!--googleLoginBtn-->
