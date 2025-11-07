@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Pets - Snoutsy</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/buy-sell.css">
+    <link rel="shortcut icon" href="../assets/Favicon.ico" type="image/jpeg">
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html" class="logo"><i class="fa-solid fa-paw"></i>Snoutsy</a>
+        <nav class="navbar">
+            <a href="../index.html">Home</a>
+            <a href="./services.html">Services</a>
+            <a href="./about.html">About Us</a>
+            <a href="./contact.html">Contact Us</a>
+            <a href="./buy.html">Buy</a>
+            <a href="./sell.html" class="active">Sell</a>
+            <a href="./login.html" class="login-btn" id="login-link">Login</a>
+            <div id="user-info" class="user-info" style="display: none;">
+                <a href="./profile.html" class="user-profile-link">
+                    <img id="user-photo" src="" alt="User" class="user-photo">
+                    <span id="user-name" class="user-name"></span>
+                </a>
+                <button id="logout-btn" class="logout-btn">Logout</button>
+            </div>
+        </nav>
+        <i id="menu-btn" class="fas fa-bars"></i>
+    </header>
+
+    <!-- Sell Pets Section -->
+    <section class="buy-sell-section">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Sell Pets</h1>
+                <p class="page-subtitle">List your pets for sale and connect with verified buyers</p>
+            </div>
+
+            <!-- Add Pet Form -->
+            <div class="add-pet-form-container">
+                <h2 class="form-title">Add New Pet Listing</h2>
+                <form id="add-pet-form" class="add-pet-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pet-name">Pet Name *</label>
+                            <input type="text" id="pet-name" name="petName" required placeholder="Enter pet name">
+                        </div>
+                        <div class="form-group">
+                            <label for="pet-type">Pet Type *</label>
+                            <select id="pet-type" name="petType" required>
+                                <option value="">Select type</option>
+                                <option value="dog">Dog</option>
+                                <option value="cat">Cat</option>
+                                <option value="bird">Bird</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pet-breed">Breed *</label>
+                            <input type="text" id="pet-breed" name="petBreed" required placeholder="e.g., Golden Retriever">
+                        </div>
+                        <div class="form-group">
+                            <label for="pet-age">Age *</label>
+                            <input type="text" id="pet-age" name="petAge" required placeholder="e.g., 2 years">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pet-gender">Gender *</label>
+                            <select id="pet-gender" name="petGender" required>
+                                <option value="">Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pet-price">Price (₹) *</label>
+                            <input type="number" id="pet-price" name="petPrice" required placeholder="Enter price" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pet-location">Location *</label>
+                            <input type="text" id="pet-location" name="petLocation" required placeholder="City, State">
+                        </div>
+                        <div class="form-group">
+                            <label for="pet-image">Image URL</label>
+                            <input type="url" id="pet-image" name="petImage" placeholder="https://example.com/image.jpg">
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="pet-description">Description *</label>
+                        <textarea id="pet-description" name="petDescription" required rows="4" placeholder="Describe your pet, health status, vaccination details, etc."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-plus"></i> Add Pet Listing
+                    </button>
+                </form>
+            </div>
+
+            <!-- My Listings -->
+            <div class="my-listings-section">
+                <h2 class="section-title">My Pet Listings</h2>
+                <div id="my-pets-grid" class="pets-grid">
+                    <!-- Seller's pet listings will be dynamically inserted here -->
+                    <div class="empty-state">
+                        <i class="fas fa-dog" style="font-size: 5rem; color: #ccc; margin-bottom: 1rem;"></i>
+                        <h3>No listings yet</h3>
+                        <p>Add your first pet listing above!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <section class="footer">
+        <div class="footer-content">
+           <h3><i class="fa-solid fa-paw"></i>Snoutsy</h3> 
+           <p>Snoutsy is a trusted platform for buying, selling, and adopting pets. We connect verified users to ensure secure and responsible pet ownership.</p>
+           <ul class="socials">
+            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+            <li><a href="#"><i class="fa-brands fa-google"></i></a></li>
+            <li><a href="#"><i class="fa fa-youtube"></i></a></li>
+            <li><a href="#"><i class="fa fa-linkedin-square"></i></a></li>
+         </ul>
+        </div>
+    </section>
+    <section class="footer-bottom">
+       <p>copyright &copy;2023 <a href="#">Snoutsy.</a></p>
+    </section>
+
+    <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
+    <script src="../js/script.js"></script>
+    
+    <!-- Firebase Authentication for Sell Page -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAZnkTV-mK0F7Q4Fm5OeK_vRPHFgGt6Gms",
+            authDomain: "snoutsy-df81c.firebaseapp.com",
+            projectId: "snoutsy-df81c",
+            storageBucket: "snoutsy-df81c.firebasestorage.app",
+            messagingSenderId: "636456747643",
+            appId: "1:636456747643:web:f62ed4b7fe0b3217b998de",
+            measurementId: "G-G13VVSSN6F"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Get DOM elements
+        const loginLink = document.getElementById('login-link');
+        const userInfo = document.getElementById('user-info');
+        const userPhoto = document.getElementById('user-photo');
+        const userName = document.getElementById('user-name');
+        const logoutBtn = document.getElementById('logout-btn');
+        const addPetForm = document.getElementById('add-pet-form');
+        const myPetsGrid = document.getElementById('my-pets-grid');
+        let currentUser = null;
+
+        // Function to update UI based on auth state
+        function updateUI(user) {
+            currentUser = user;
+            if (user) {
+                loginLink.style.display = 'none';
+                userInfo.style.display = 'flex';
+                userPhoto.src = user.photoURL || 'https://via.placeholder.com/40';
+                userPhoto.alt = user.displayName || 'User';
+                userName.textContent = user.displayName || 'User';
+                loadMyPets();
+            } else {
+                loginLink.style.display = 'block';
+                userInfo.style.display = 'none';
+                // Redirect to login if not authenticated
+                window.location.href = './login.html';
+            }
+        }
+
+        // Monitor auth state changes
+        onAuthStateChanged(auth, (user) => {
+            updateUI(user);
+        });
+
+        // Logout functionality
+        logoutBtn?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                localStorage.removeItem('user');
+                window.location.href = './login.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+                alert('Error signing out. Please try again.');
+            }
+        });
+
+        // Add pet form submission
+        addPetForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                alert('Please login to add a pet listing.');
+                window.location.href = './login.html';
+                return;
+            }
+
+            const formData = new FormData(addPetForm);
+            const petData = {
+                id: Date.now().toString(),
+                name: formData.get('petName'),
+                type: formData.get('petType'),
+                breed: formData.get('petBreed'),
+                age: formData.get('petAge'),
+                gender: formData.get('petGender'),
+                price: parseInt(formData.get('petPrice')),
+                location: formData.get('petLocation'),
+                image: formData.get('petImage') || '../assets/Pet1.png',
+                description: formData.get('petDescription'),
+                sellerId: currentUser.uid,
+                sellerName: currentUser.displayName,
+                sellerEmail: currentUser.email,
+                createdAt: new Date().toISOString()
+            };
+
+            // Save to localStorage (temporary - will be replaced with DB)
+            const pets = JSON.parse(localStorage.getItem('pets') || '[]');
+            pets.push(petData);
+            localStorage.setItem('pets', JSON.stringify(pets));
+
+            alert('Pet listing added successfully!');
+            addPetForm.reset();
+            loadMyPets();
+        });
+
+        // Load seller's pets
+        function loadMyPets() {
+            if (!currentUser) return;
+
+            const pets = JSON.parse(localStorage.getItem('pets') || '[]');
+            const myPets = pets.filter(pet => pet.sellerId === currentUser.uid);
+
+            if (myPets.length === 0) {
+                myPetsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-dog" style="font-size: 5rem; color: #ccc; margin-bottom: 1rem;"></i>
+                        <h3>No listings yet</h3>
+                        <p>Add your first pet listing above!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            myPetsGrid.innerHTML = myPets.map(pet => `
+                <div class="pet-card">
+                    <div class="pet-image">
+                        <img src="${pet.image || '../assets/Pet1.png'}" alt="${pet.name}">
+                        <span class="pet-type-badge">${pet.type}</span>
+                    </div>
+                    <div class="pet-card-content">
+                        <h3>${pet.name}</h3>
+                        <p class="pet-breed">${pet.breed}</p>
+                        <p class="pet-description">${pet.description}</p>
+                        <div class="pet-details">
+                            <span><i class="fas fa-calendar"></i> ${pet.age}</span>
+                            <span><i class="fas fa-venus-mars"></i> ${pet.gender}</span>
+                            <span><i class="fas fa-map-marker-alt"></i> ${pet.location}</span>
+                        </div>
+                        <div class="pet-price">
+                            <span class="price">₹${pet.price?.toLocaleString() || '0'}</span>
+                        </div>
+                        <div class="pet-card-actions">
+                            <button class="btn-edit" onclick="editPet('${pet.id}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn-delete" onclick="deletePet('${pet.id}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Edit pet function
+        window.editPet = function(petId) {
+            alert('Edit functionality will be connected to the database.');
+        };
+
+        // Delete pet function
+        window.deletePet = function(petId) {
+            if (confirm('Are you sure you want to delete this listing?')) {
+                const pets = JSON.parse(localStorage.getItem('pets') || '[]');
+                const updatedPets = pets.filter(pet => pet.id !== petId);
+                localStorage.setItem('pets', JSON.stringify(updatedPets));
+                loadMyPets();
+                alert('Pet listing deleted successfully!');
+            }
+        };
+    </script>
+</body>
+</html>
+

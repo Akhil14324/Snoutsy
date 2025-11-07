@@ -19,8 +19,16 @@
             <a href="./pages/services.html">Services</a>
             <a href="./pages/about.html">About Us</a>
             <a href="./pages/contact.html">Contact Us</a>
-            <a href="./pages/login.html" class="login-btn">Login</a>
-
+            <a href="./pages/buy.html">Buy</a>
+            <a href="./pages/sell.html">Sell</a>
+            <a href="./pages/login.html" class="login-btn" id="login-link">Login</a>
+            <div id="user-info" class="user-info" style="display: none;">
+                <a href="./pages/profile.html" class="user-profile-link">
+                    <img id="user-photo" src="" alt="User" class="user-photo">
+                    <span id="user-name" class="user-name"></span>
+                </a>
+                <button id="logout-btn" class="logout-btn">Logout</button>
+            </div>
         </nav>
         <i id="menu-btn" class="fas fa-bars"></i>
     </header>
@@ -31,8 +39,16 @@
         <div class="home-content">
             <h3>Snoutsy</h3>
             <p class="desc">We Care <span>for Pets</span></p>
+            <div id="welcome-message" style="display: none; margin-bottom: 1rem;">
+                <p style="color: #000000; font-weight: 600; font-size: 1.8rem;">Welcome back, <span id="welcome-name"></span>!</p>
+            </div>
             <p>Hello Guys, we are team Snoutsy. Snoutsy is your trusted platform to buy, sell, or adopt pets with ease. We connect verified users to loving homes, ensuring every paw finds a purpose. </p>
-            <a href="./pages/about.html" class="btn">About Us</a>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 2rem;">
+                <button id="buy-sell-btn" class="btn" style="background: #4EA685; padding: 1.2rem 3rem; font-size: 1.6rem; cursor: pointer; border: none; border-radius: 0.5rem; color: white; font-weight: 600;">
+                    <i class="fas fa-paw"></i> Buy or Sell Pets
+                </button>
+                <a href="./pages/about.html" class="btn">About Us</a>
+            </div>
         </div>
         </section>
         <section class="icons-container">
@@ -71,8 +87,8 @@
         <h1 class="heading">Client's <span>Reviews</span></h1>
         <div class="box-container">
           <div class="box"> 
-            <img src="./assets/Man1.jpg" alt="">
-            <h3>Xavier</h3>
+            <img src="./assets/pru photo.png" alt="">
+            <h3>Pruthvee Raj</h3>
             <p class="job">Client</p>
             <div class="stars">
               <i class="fas fa-star"></i>
@@ -84,8 +100,8 @@
             <p class="text">Snoutsy is the best platform I have used for finding genuine pet buyers. The user verification gave me peace of mind while selling my Golden Retriever pups.</p>
           </div>
           <div class="box">
-            <img src="./assets/Man2.jpg" alt="">
-            <h3>Francis</h3>
+            <img src="./assets/chetan photo.png" alt="">
+            <h3>Phaniindra</h3>
             <p class="job">Client</p>
             <div class="stars">
               <i class="fas fa-star"></i>
@@ -97,8 +113,8 @@
             <p class="text">"I adopted a Ragdoll cat through Snoutsy and the process was smooth and transparent. It is great to finally have a trustworthy pet platform in India."</p>
           </div>
           <div class="box">
-            <img src="./assets/Man3.jpg" alt="">
-            <h3>John</h3>
+            <img src="./assets/likith photo.png" alt="">
+            <h3>Likith</h3>
             <p class="job">Client</p>
             <div class="stars">
               <i class="fas fa-star"></i>
@@ -134,6 +150,238 @@
     <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
     <script src="./js/script.js"></script>
   
+    <!-- Firebase Authentication UI -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAZnkTV-mK0F7Q4Fm5OeK_vRPHFgGt6Gms",
+            authDomain: "snoutsy-df81c.firebaseapp.com",
+            projectId: "snoutsy-df81c",
+            storageBucket: "snoutsy-df81c.firebasestorage.app",
+            messagingSenderId: "636456747643",
+            appId: "1:636456747643:web:f62ed4b7fe0b3217b998de",
+            measurementId: "G-G13VVSSN6F"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Get DOM elements
+        const loginLink = document.getElementById('login-link');
+        const userInfo = document.getElementById('user-info');
+        const userPhoto = document.getElementById('user-photo');
+        const userName = document.getElementById('user-name');
+        const logoutBtn = document.getElementById('logout-btn');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const welcomeName = document.getElementById('welcome-name');
+
+        // Function to update UI based on auth state
+        function updateUI(user) {
+            if (user) {
+                // User is logged in
+                loginLink.style.display = 'none';
+                userInfo.style.display = 'flex';
+                
+                // Set user info
+                userPhoto.src = user.photoURL || 'https://via.placeholder.com/40';
+                userPhoto.alt = user.displayName || 'User';
+                userName.textContent = user.displayName || 'User';
+                
+                // Show welcome message
+                welcomeMessage.style.display = 'block';
+                welcomeName.textContent = user.displayName || 'there';
+                
+                // Update localStorage
+                localStorage.setItem('user', JSON.stringify({
+                    uid: user.uid,
+                    displayName: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL
+                }));
+            } else {
+                // User is not logged in
+                loginLink.style.display = 'block';
+                userInfo.style.display = 'none';
+                welcomeMessage.style.display = 'none';
+                
+                // Clear localStorage
+                localStorage.removeItem('user');
+            }
+        }
+
+        // Monitor auth state changes
+        onAuthStateChanged(auth, (user) => {
+            updateUI(user);
+        });
+
+        // Logout functionality
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                localStorage.removeItem('user');
+                console.log('User signed out successfully');
+                // Redirect to login page after logout
+                window.location.href = './pages/login.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+                alert('Error signing out. Please try again.');
+            }
+        });
+
+        // Check if user data exists in localStorage (fallback)
+        const storedUser = localStorage.getItem('user');
+        if (storedUser && !auth.currentUser) {
+            try {
+                const userData = JSON.parse(storedUser);
+                // This is just for display - Firebase will handle the actual auth state
+                // The onAuthStateChanged will update it properly
+            } catch (e) {
+                console.error('Error parsing stored user data:', e);
+            }
+        }
+
+        // Buy/Sell Button Modal (only on index.html)
+        const buySellBtn = document.getElementById('buy-sell-btn');
+        if (buySellBtn) {
+            // Create modal overlay
+            const modalOverlay = document.createElement('div');
+            modalOverlay.className = 'modal-overlay';
+            modalOverlay.id = 'buy-sell-modal';
+            modalOverlay.innerHTML = `
+                <div class="modal-content" style="position: relative;">
+                    <button class="modal-close" onclick="closeBuySellModal()">&times;</button>
+                    <h2>Choose an Option</h2>
+                    <div class="modal-options">
+                        <button class="modal-btn modal-btn-buy" onclick="goToBuy()">
+                            <i class="fas fa-shopping-cart"></i> Buy Pets
+                        </button>
+                        <button class="modal-btn modal-btn-sell" onclick="goToSell()">
+                            <i class="fas fa-tag"></i> Sell Pets
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modalOverlay);
+
+            // Add modal styles
+            const style = document.createElement('style');
+            style.textContent = `
+                .modal-overlay {
+                    display: none;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    z-index: 1000;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .modal-overlay.active {
+                    display: flex;
+                }
+                .modal-content {
+                    background: white;
+                    border-radius: 1rem;
+                    padding: 3rem;
+                    max-width: 500px;
+                    width: 90%;
+                    text-align: center;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                    animation: modalSlideIn 0.3s ease;
+                }
+                @keyframes modalSlideIn {
+                    from { opacity: 0; transform: translateY(-50px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .modal-content h2 {
+                    font-size: 2.5rem;
+                    color: #1e1e1f;
+                    margin-bottom: 2rem;
+                    font-weight: 700;
+                }
+                .modal-options {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
+                }
+                .modal-btn {
+                    padding: 1.5rem 2rem;
+                    border: none;
+                    border-radius: 0.5rem;
+                    font-size: 1.6rem;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 1rem;
+                }
+                .modal-btn-buy {
+                    background: #4EA685;
+                    color: white;
+                }
+                .modal-btn-buy:hover {
+                    background: #57B894;
+                    transform: translateY(-2px);
+                }
+                .modal-btn-sell {
+                    background: #DB4437;
+                    color: white;
+                }
+                .modal-btn-sell:hover {
+                    background: #c23321;
+                    transform: translateY(-2px);
+                }
+                .modal-close {
+                    position: absolute;
+                    top: 1rem;
+                    right: 1rem;
+                    background: none;
+                    border: none;
+                    font-size: 2rem;
+                    cursor: pointer;
+                    color: #666;
+                    transition: color 0.3s ease;
+                }
+                .modal-close:hover {
+                    color: #1e1e1f;
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Open modal on button click
+            buySellBtn.addEventListener('click', () => {
+                modalOverlay.classList.add('active');
+            });
+
+            // Close modal when clicking outside
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    closeBuySellModal();
+                }
+            });
+
+            // Global functions for modal
+            window.closeBuySellModal = function() {
+                modalOverlay.classList.remove('active');
+            };
+
+            window.goToBuy = function() {
+                window.location.href = './pages/buy.html';
+            };
+
+            window.goToSell = function() {
+                window.location.href = './pages/sell.html';
+            };
+        }
+    </script>
 
 </body>
 </html> 

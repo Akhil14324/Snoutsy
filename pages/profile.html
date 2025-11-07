@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Snoutsy</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/profile.css">
+    <link rel="shortcut icon" href="../assets/Favicon.ico" type="image/jpeg">
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html" class="logo"><i class="fa-solid fa-paw"></i>Snoutsy</a>
+        <nav class="navbar">
+            <a href="../index.html">Home</a>
+            <a href="./services.html">Services</a>
+            <a href="./about.html">About Us</a>
+            <a href="./contact.html">Contact Us</a>
+            <a href="./buy.html">Buy</a>
+            <a href="./sell.html">Sell</a>
+            <a href="./login.html" class="login-btn" id="login-link">Login</a>
+            <div id="user-info" class="user-info" style="display: none;">
+                <a href="./profile.html" class="user-profile-link">
+                    <img id="user-photo" src="" alt="User" class="user-photo">
+                    <span id="user-name" class="user-name"></span>
+                </a>
+                <button id="logout-btn" class="logout-btn">Logout</button>
+            </div>
+        </nav>
+        <i id="menu-btn" class="fas fa-bars"></i>
+    </header>
+
+    <!-- Profile Section -->
+    <section class="profile-section">
+        <div class="profile-container">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-avatar-container">
+                    <img id="profile-photo" src="" alt="Profile Photo" class="profile-avatar">
+                    <button id="edit-photo-btn" class="edit-photo-btn" title="Edit Photo">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
+                <div class="profile-info">
+                    <h1 id="profile-name" class="profile-name">Loading...</h1>
+                    <p id="profile-email" class="profile-email">Loading...</p>
+                    <p id="profile-uid" class="profile-uid">User ID: Loading...</p>
+                </div>
+            </div>
+
+            <!-- Profile Stats -->
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-dog"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pets-listed">0</h3>
+                        <p>Pets Listed</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pets-adopted">0</h3>
+                        <p>Pets Adopted</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pets-sold">0</h3>
+                        <p>Pets Sold</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="user-rating">5.0</h3>
+                        <p>Rating</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Tabs -->
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" data-tab="my-pets">My Pets</button>
+                <button class="tab-btn" data-tab="favorites">Favorites</button>
+                <button class="tab-btn" data-tab="settings">Settings</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- My Pets Tab -->
+                <div id="my-pets-tab" class="tab-panel active">
+                    <div class="section-header">
+                        <h2>My Pet Listings</h2>
+                        <button class="btn-primary" id="add-pet-btn">
+                            <i class="fas fa-plus"></i> Add New Pet
+                        </button>
+                    </div>
+                    <div id="pets-list" class="pets-grid">
+                        <div class="empty-state">
+                            <i class="fas fa-dog" style="font-size: 4rem; color: #ccc; margin-bottom: 1rem;"></i>
+                            <p>No pets listed yet. Start by adding your first pet!</p>
+                            <button class="btn-primary" onclick="document.getElementById('add-pet-btn').click()">
+                                <i class="fas fa-plus"></i> Add Your First Pet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Favorites Tab -->
+                <div id="favorites-tab" class="tab-panel">
+                    <div class="section-header">
+                        <h2>Favorite Pets</h2>
+                    </div>
+                    <div id="favorites-list" class="pets-grid">
+                        <div class="empty-state">
+                            <i class="fas fa-heart" style="font-size: 4rem; color: #ccc; margin-bottom: 1rem;"></i>
+                            <p>No favorite pets yet. Start exploring and add pets to your favorites!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settings-tab" class="tab-panel">
+                    <div class="section-header">
+                        <h2>Account Settings</h2>
+                    </div>
+                    <div class="settings-content">
+                        <div class="setting-item">
+                            <label>Display Name</label>
+                            <input type="text" id="display-name-input" class="setting-input" placeholder="Your display name">
+                            <button class="btn-secondary" id="update-name-btn">Update Name</button>
+                        </div>
+                        <div class="setting-item">
+                            <label>Email</label>
+                            <input type="email" id="email-input" class="setting-input" readonly>
+                            <small>Email cannot be changed</small>
+                        </div>
+                        <div class="setting-item">
+                            <label>Phone Number</label>
+                            <input type="tel" id="phone-input" class="setting-input" placeholder="+91 1234567890">
+                            <button class="btn-secondary" id="update-phone-btn">Update Phone</button>
+                        </div>
+                        <div class="setting-item">
+                            <label>Location</label>
+                            <input type="text" id="location-input" class="setting-input" placeholder="City, State">
+                            <button class="btn-secondary" id="update-location-btn">Update Location</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <section class="footer">
+        <div class="footer-content">
+           <h3><i class="fa-solid fa-paw"></i>Snoutsy</h3> 
+           <p>Snoutsy is a trusted platform for buying, selling, and adopting pets. We connect verified users to ensure secure and responsible pet ownership.</p>
+           <ul class="socials">
+            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+            <li><a href="#"><i class="fa-brands fa-google"></i></a></li>
+            <li><a href="#"><i class="fa fa-youtube"></i></a></li>
+            <li><a href="#"><i class="fa fa-linkedin-square"></i></a></li>
+         </ul>
+        </div>
+    </section>
+    <section class="footer-bottom">
+       <p>copyright &copy;2023 <a href="#">Snoutsy.</a></p>
+    </section>
+
+    <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
+    <script src="../js/script.js"></script>
+    
+    <!-- Firebase Authentication for Profile -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAZnkTV-mK0F7Q4Fm5OeK_vRPHFgGt6Gms",
+            authDomain: "snoutsy-df81c.firebaseapp.com",
+            projectId: "snoutsy-df81c",
+            storageBucket: "snoutsy-df81c.firebasestorage.app",
+            messagingSenderId: "636456747643",
+            appId: "1:636456747643:web:f62ed4b7fe0b3217b998de",
+            measurementId: "G-G13VVSSN6F"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Get DOM elements
+        const loginLink = document.getElementById('login-link');
+        const userInfo = document.getElementById('user-info');
+        const userPhoto = document.getElementById('user-photo');
+        const userName = document.getElementById('user-name');
+        const logoutBtn = document.getElementById('logout-btn');
+        const profilePhoto = document.getElementById('profile-photo');
+        const profileName = document.getElementById('profile-name');
+        const profileEmail = document.getElementById('profile-email');
+        const profileUid = document.getElementById('profile-uid');
+
+        // Tab functionality
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetTab = btn.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and panels
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabPanels.forEach(p => p.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding panel
+                btn.classList.add('active');
+                document.getElementById(`${targetTab}-tab`).classList.add('active');
+            });
+        });
+
+        // Function to update UI based on auth state
+        function updateUI(user) {
+            if (user) {
+                // User is logged in
+                loginLink.style.display = 'none';
+                userInfo.style.display = 'flex';
+                
+                // Set header user info
+                userPhoto.src = user.photoURL || 'https://via.placeholder.com/40';
+                userPhoto.alt = user.displayName || 'User';
+                userName.textContent = user.displayName || 'User';
+                
+                // Set profile page info
+                profilePhoto.src = user.photoURL || 'https://via.placeholder.com/150';
+                profileName.textContent = user.displayName || 'User';
+                profileEmail.textContent = user.email || 'No email';
+                profileUid.textContent = `User ID: ${user.uid}`;
+                
+                // Set email input
+                document.getElementById('email-input').value = user.email || '';
+                
+                // Update localStorage
+                localStorage.setItem('user', JSON.stringify({
+                    uid: user.uid,
+                    displayName: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL
+                }));
+            } else {
+                // User is not logged in - redirect to login
+                window.location.href = './login.html';
+            }
+        }
+
+        // Monitor auth state changes
+        onAuthStateChanged(auth, (user) => {
+            updateUI(user);
+        });
+
+        // Logout functionality
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                localStorage.removeItem('user');
+                console.log('User signed out successfully');
+                window.location.href = './login.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+                alert('Error signing out. Please try again.');
+            }
+        });
+
+        // Add Pet Button (placeholder for now)
+        document.getElementById('add-pet-btn').addEventListener('click', () => {
+            alert('Add Pet functionality coming soon!');
+        });
+
+        // Settings update buttons (placeholder for now)
+        document.getElementById('update-name-btn').addEventListener('click', () => {
+            alert('Update name functionality coming soon!');
+        });
+
+        document.getElementById('update-phone-btn').addEventListener('click', () => {
+            alert('Update phone functionality coming soon!');
+        });
+
+        document.getElementById('update-location-btn').addEventListener('click', () => {
+            alert('Update location functionality coming soon!');
+        });
+    </script>
+</body>
+</html>
+

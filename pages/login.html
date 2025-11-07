@@ -11,7 +11,7 @@
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
     
     // Your Firebase configuration
     const firebaseConfig = {
@@ -24,17 +24,63 @@
       measurementId: "G-G13VVSSN6F"
     };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-    
-    // Set language code
-    auth.languageCode = 'en';
-    
-    // Make auth and provider available globally
-    window.firebaseAuth = auth;
-    window.googleProvider = provider;
+    // Log current origin for debugging
+    console.log('Current origin:', window.location.origin);
+    console.log('Current hostname:', window.location.hostname);
+    console.log('Current port:', window.location.port || 'default (80/443)');
+    console.log('Current protocol:', window.location.protocol);
+
+    try {
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+      
+      // Force account selection every time (always ask which account to use)
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
+      
+      // Set language code
+      auth.languageCode = 'en';
+      
+      // Make auth and provider available globally
+      window.firebaseAuth = auth;
+      window.googleProvider = provider;
+      
+      console.log('Firebase initialized successfully');
+      console.log('Auth domain:', firebaseConfig.authDomain);
+      
+      // Auto sign-out on page load for testing (forces login every time browser opens)
+      let hasAutoSignedOut = false;
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        // Only auto sign-out once on initial page load
+        if (!hasAutoSignedOut) {
+          hasAutoSignedOut = true;
+          try {
+            // Clear localStorage first
+            localStorage.removeItem('user');
+            
+            if (user) {
+              console.log('User found, signing out for testing...');
+              await signOut(auth);
+              console.log('User signed out successfully - ready for fresh login');
+            } else {
+              console.log('No user signed in - ready for login');
+            }
+            
+            // Unsubscribe after first check to avoid infinite loop
+            unsubscribe();
+          } catch (error) {
+            console.error('Error during auto sign-out:', error);
+            unsubscribe();
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Firebase initialization error:', error);
+      alert('Firebase initialization failed. Check console for details.');
+    }
   </script>
 
   <style>
@@ -417,21 +463,21 @@
           <div class="form sign-up">
             <div class="input-group">
               <i class='bx bxs-user'></i>
-              <input type="text" placeholder="Username">
+              <input type="text" id="signup-username" placeholder="Username" required>
             </div>
             <div class="input-group">
               <i class='bx bx-mail-send'></i>
-              <input type="email" placeholder="Email">
+              <input type="email" id="signup-email" placeholder="Email" required>
             </div>
             <div class="input-group">
               <i class='bx bxs-lock-alt'></i>
-              <input type="password" placeholder="Password">
+              <input type="password" id="signup-password" placeholder="Password" required>
             </div>
             <div class="input-group">
               <i class='bx bxs-lock-alt'></i>
-              <input type="password" placeholder="Confirm password">
+              <input type="password" id="signup-confirm-password" placeholder="Confirm password" required>
             </div>
-            <button>Sign up</button>
+            <button type="button" id="signup-btn">Sign up</button>
             <p>
               <span>Already have an account?</span>
               <b onclick="toggle()" class="pointer">Sign in here</b>
@@ -446,20 +492,20 @@
         <div class="form-wrapper align-items-center">
           <div class="form sign-in">
             <div class="input-group">
-              <i class='bx bxs-user'></i>
-              <input type="text" placeholder="Username">
+              <i class='bx bx-mail-send'></i>
+              <input type="email" id="signin-email" placeholder="Email" required>
             </div>
             <div class="input-group">
               <i class='bx bxs-lock-alt'></i>
-              <input type="password" placeholder="Password">
+              <input type="password" id="signin-password" placeholder="Password" required>
             </div>
-            <button>Sign in</button>
+            <button type="button" id="signin-btn">Sign in</button>
              <!-- GOOGLE LOGIN BUTTON -->
   <button id="googleLoginBtn" class="btn google-btn">
     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
     Sign in with Google
   </button>
-            <p><b>Forgot password?</b></p>
+            <p><b onclick="showForgotPassword()" class="pointer" style="cursor: pointer;">Forgot password?</b></p>
             <p>
               <span>Don't have an account?</span>
               <b onclick="toggle()" class="pointer">Sign up here</b>
@@ -531,14 +577,23 @@
       // Add click event listener to Google login button
       googleLoginBtn.addEventListener('click', async () => {
         try {
+          // Debug logging
+          console.log('=== Google Login Attempt ===');
+          console.log('Current URL:', window.location.href);
+          console.log('Origin:', window.location.origin);
+          console.log('Firebase Auth:', window.firebaseAuth ? 'Initialized' : 'Not initialized');
+          console.log('Google Provider:', window.googleProvider ? 'Initialized' : 'Not initialized');
+          
           // Show loading state
           googleLoginBtn.disabled = true;
           const originalContent = googleLoginBtn.innerHTML;
           googleLoginBtn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo"> Signing in...';
           
           // Sign in with Google
+          console.log('Calling signInWithPopup...');
           const result = await signInWithPopup(window.firebaseAuth, window.googleProvider);
           const user = result.user;
+          console.log('Sign-in successful!', user);
           
           // Success - user is signed in
           console.log('User signed in:', user);
@@ -558,8 +613,14 @@
           window.location.href = '../index.html';
           
         } catch (error) {
-          // Handle errors
-          console.error('Google sign-in error:', error);
+          // Handle errors - comprehensive logging
+          console.error('=== Google Sign-In Error ===');
+          console.error('Error object:', error);
+          console.error('Error code:', error.code);
+          console.error('Error message:', error.message);
+          console.error('Error stack:', error.stack);
+          console.error('Current origin:', window.location.origin);
+          console.error('Full URL:', window.location.href);
           
           // Reset button state
           googleLoginBtn.disabled = false;
@@ -567,6 +628,7 @@
           
           // Show error message
           let errorMessage = 'An error occurred during sign-in.';
+          let detailedInfo = '';
           
           if (error.code === 'auth/popup-closed-by-user') {
             errorMessage = 'Sign-in popup was closed. Please try again.';
@@ -574,13 +636,34 @@
             errorMessage = 'Sign-in was cancelled. Please try again.';
           } else if (error.code === 'auth/popup-blocked') {
             errorMessage = 'Popup was blocked by browser. Please allow popups and try again.';
+            detailedInfo = '\n\nTo fix: Check browser settings and allow popups for this site.';
           } else if (error.code === 'auth/network-request-failed') {
             errorMessage = 'Network error. Please check your internet connection.';
           } else if (error.code === 'auth/account-exists-with-different-credential') {
             errorMessage = 'An account already exists with this email. Please use a different sign-in method.';
+          } else if (error.code === 'auth/unauthorized-domain') {
+            errorMessage = `Domain not authorized!`;
+            detailedInfo = `\n\nCurrent origin: ${window.location.origin}\nCurrent hostname: ${window.location.hostname}\n\nPlease add "${window.location.hostname}" to Firebase Console → Authentication → Settings → Authorized domains`;
+          } else if (error.code === 'auth/operation-not-allowed') {
+            errorMessage = 'Google sign-in is not enabled.';
+            detailedInfo = '\n\nPlease enable Google sign-in in Firebase Console → Authentication → Sign-in method.';
+          } else if (error.code === 'auth/invalid-api-key') {
+            errorMessage = 'Invalid Firebase API key.';
+            detailedInfo = '\n\nPlease check your Firebase configuration.';
+          } else if (error.code === 'auth/app-not-authorized') {
+            errorMessage = 'Firebase app not authorized.';
+            detailedInfo = '\n\nPlease check Firebase Console settings and ensure the app is properly configured.';
+          } else {
+            // Show detailed error for debugging
+            errorMessage = `Error: ${error.code || 'Unknown error'}`;
+            detailedInfo = `\n\nMessage: ${error.message}\n\nFull error logged to console. Please check browser console (F12) for details.`;
           }
           
-          alert(errorMessage);
+          // Show alert with detailed info
+          alert(errorMessage + detailedInfo);
+          
+          // Also log to help with debugging
+          console.error('User-friendly error message:', errorMessage);
         }
       });
     };
@@ -609,6 +692,203 @@
       }
     };
     checkAuthState();
+  </script>
+
+  <!-- Email/Password Authentication -->
+  <script type="module">
+    import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    
+    // Get form elements
+    const signupBtn = document.getElementById('signup-btn');
+    const signinBtn = document.getElementById('signin-btn');
+    const signupUsername = document.getElementById('signup-username');
+    const signupEmail = document.getElementById('signup-email');
+    const signupPassword = document.getElementById('signup-password');
+    const signupConfirmPassword = document.getElementById('signup-confirm-password');
+    const signinEmail = document.getElementById('signin-email');
+    const signinPassword = document.getElementById('signin-password');
+
+    // Sign Up functionality
+    signupBtn?.addEventListener('click', async () => {
+      try {
+        // Validation
+        const username = signupUsername.value.trim();
+        const email = signupEmail.value.trim();
+        const password = signupPassword.value;
+        const confirmPassword = signupConfirmPassword.value;
+
+        if (!username || !email || !password || !confirmPassword) {
+          alert('Please fill in all fields.');
+          return;
+        }
+
+        if (password.length < 6) {
+          alert('Password must be at least 6 characters long.');
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          alert('Passwords do not match. Please try again.');
+          signupConfirmPassword.focus();
+          return;
+        }
+
+        // Show loading state
+        signupBtn.disabled = true;
+        signupBtn.textContent = 'Signing up...';
+
+        // Create user with email and password
+        const userCredential = await createUserWithEmailAndPassword(window.firebaseAuth, email, password);
+        const user = userCredential.user;
+
+        // Update display name
+        await updateProfile(user, {
+          displayName: username
+        });
+
+        // Store user info in localStorage
+        localStorage.setItem('user', JSON.stringify({
+          uid: user.uid,
+          displayName: username,
+          email: user.email,
+          photoURL: user.photoURL || null
+        }));
+
+        alert(`Welcome, ${username}! Your account has been created successfully.`);
+        
+        // Redirect to index.html
+        window.location.href = '../index.html';
+
+      } catch (error) {
+        console.error('Sign up error:', error);
+        signupBtn.disabled = false;
+        signupBtn.textContent = 'Sign up';
+
+        let errorMessage = 'An error occurred during sign up.';
+        
+        if (error.code === 'auth/email-already-in-use') {
+          errorMessage = 'This email is already registered. Please sign in instead.';
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = 'Invalid email address. Please enter a valid email.';
+        } else if (error.code === 'auth/weak-password') {
+          errorMessage = 'Password is too weak. Please choose a stronger password.';
+        } else if (error.code === 'auth/network-request-failed') {
+          errorMessage = 'Network error. Please check your internet connection.';
+        }
+        
+        alert(errorMessage);
+      }
+    });
+
+    // Sign In functionality
+    signinBtn?.addEventListener('click', async () => {
+      try {
+        const email = signinEmail.value.trim();
+        const password = signinPassword.value;
+
+        if (!email || !password) {
+          alert('Please enter your email and password.');
+          return;
+        }
+
+        // Show loading state
+        signinBtn.disabled = true;
+        signinBtn.textContent = 'Signing in...';
+
+        // Sign in with email and password
+        const userCredential = await signInWithEmailAndPassword(window.firebaseAuth, email, password);
+        const user = userCredential.user;
+
+        // Store user info in localStorage
+        localStorage.setItem('user', JSON.stringify({
+          uid: user.uid,
+          displayName: user.displayName || 'User',
+          email: user.email,
+          photoURL: user.photoURL || null
+        }));
+
+        alert(`Welcome back, ${user.displayName || 'User'}!`);
+        
+        // Redirect to index.html
+        window.location.href = '../index.html';
+
+      } catch (error) {
+        console.error('Sign in error:', error);
+        signinBtn.disabled = false;
+        signinBtn.textContent = 'Sign in';
+
+        let errorMessage = 'An error occurred during sign in.';
+        
+        if (error.code === 'auth/user-not-found') {
+          errorMessage = 'No account found with this email. Please sign up first.';
+        } else if (error.code === 'auth/wrong-password') {
+          errorMessage = 'Incorrect password. Please try again.';
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = 'Invalid email address. Please enter a valid email.';
+        } else if (error.code === 'auth/invalid-credential') {
+          errorMessage = 'Invalid email or password. Please check your credentials.';
+        } else if (error.code === 'auth/network-request-failed') {
+          errorMessage = 'Network error. Please check your internet connection.';
+        } else if (error.code === 'auth/too-many-requests') {
+          errorMessage = 'Too many failed attempts. Please try again later or reset your password.';
+        }
+        
+        alert(errorMessage);
+      }
+    });
+
+    // Forgot Password functionality
+    window.showForgotPassword = function() {
+      const email = prompt('Please enter your email address to reset your password:');
+      
+      if (!email) {
+        return; // User cancelled
+      }
+
+      if (!email.includes('@')) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      sendPasswordResetEmail(window.firebaseAuth, email)
+        .then(() => {
+          alert('Password reset email sent! Please check your inbox and follow the instructions to reset your password.');
+        })
+        .catch((error) => {
+          console.error('Password reset error:', error);
+          
+          let errorMessage = 'An error occurred while sending the reset email.';
+          
+          if (error.code === 'auth/user-not-found') {
+            errorMessage = 'No account found with this email address.';
+          } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Invalid email address. Please enter a valid email.';
+          } else if (error.code === 'auth/network-request-failed') {
+            errorMessage = 'Network error. Please check your internet connection.';
+          }
+          
+          alert(errorMessage);
+        });
+    };
+
+    // Allow Enter key to submit forms
+    signupPassword?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        signupBtn.click();
+      }
+    });
+
+    signupConfirmPassword?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        signupBtn.click();
+      }
+    });
+
+    signinPassword?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        signinBtn.click();
+      }
+    });
   </script>
 
 
