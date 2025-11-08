@@ -95,10 +95,11 @@
     <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
     <script src="../js/script.js"></script>
     
-    <!-- Firebase Authentication for Buy Page -->
+    <!-- Firebase Authentication and Firestore for Buy Page -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs, query, where, doc, addDoc, deleteDoc, getDoc, setDoc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         
         // Firebase configuration
         const firebaseConfig = {
@@ -114,6 +115,9 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        let currentUser = null;
 
         // Get DOM elements
         const loginLink = document.getElementById('login-link');
@@ -125,15 +129,43 @@
 
         // Function to update UI based on auth state
         function updateUI(user) {
+            currentUser = user;
             if (user) {
                 loginLink.style.display = 'none';
                 userInfo.style.display = 'flex';
                 userPhoto.src = user.photoURL || 'https://via.placeholder.com/40';
                 userPhoto.alt = user.displayName || 'User';
                 userName.textContent = user.displayName || 'User';
+                // Save user data to Firestore
+                saveUserData(user);
             } else {
                 loginLink.style.display = 'block';
                 userInfo.style.display = 'none';
+            }
+        }
+        
+        // Save/Update user data in Firestore
+        async function saveUserData(user) {
+            try {
+                const userRef = doc(db, 'users', user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                const userData = {
+                    uid: user.uid,
+                    displayName: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL || null,
+                    updatedAt: serverTimestamp()
+                };
+
+                if (!userSnap.exists()) {
+                    userData.createdAt = serverTimestamp();
+                    await setDoc(userRef, userData);
+                } else {
+                    await updateDoc(userRef, userData);
+                }
+            } catch (error) {
+                console.error('Error saving user data:', error);
             }
         }
 
@@ -154,46 +186,189 @@
             }
         });
 
-        // Load pets from localStorage (temporary - will be replaced with DB)
-        function loadPets() {
-            const pets = JSON.parse(localStorage.getItem('pets') || '[]');
-            
-            if (pets.length === 0) {
+        // Load pets from Firestore
+        async function loadPets() {
+            try {
+                // Get only available pets
+                const q = query(collection(db, 'pets'), where('status', '==', 'available'));
+                const querySnapshot = await getDocs(q);
+                
+                const pets = [];
+                querySnapshot.forEach((doc) => {
+                    pets.push({ id: doc.id, ...doc.data() });
+                });
+                
+                if (pets.length === 0) {
+                    petsGrid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-dog" style="font-size: 5rem; color: #ccc; margin-bottom: 1rem;"></i>
+                            <h3>No pets available yet</h3>
+                            <p>Check back soon for new pet listings!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Load user's favorites
+                let favoriteIds = [];
+                if (currentUser) {
+                    try {
+                        const favRef = doc(db, 'favorites', currentUser.uid);
+                        const favSnap = await getDoc(favRef);
+                        if (favSnap.exists()) {
+                            favoriteIds = favSnap.data().petIds || [];
+                        }
+                    } catch (error) {
+                        console.error('Error loading favorites:', error);
+                    }
+                }
+
+                petsGrid.innerHTML = pets.map(pet => {
+                    const isFavorite = favoriteIds.includes(pet.id);
+                    return `
+                        <div class="pet-card" data-type="${pet.type}" data-price="${pet.price}">
+                            <div class="pet-image">
+                                <img src="${pet.image || '../assets/Pet1.png'}" alt="${pet.name}">
+                                <span class="pet-type-badge">${pet.type}</span>
+                                ${currentUser ? `
+                                    <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite('${pet.id}')" title="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                            <div class="pet-card-content">
+                                <h3>${pet.name}</h3>
+                                <p class="pet-breed">${pet.breed}</p>
+                                <p class="pet-description">${pet.description || 'No description available'}</p>
+                                <div class="pet-details">
+                                    <span><i class="fas fa-calendar"></i> ${pet.age || 'N/A'}</span>
+                                    <span><i class="fas fa-venus-mars"></i> ${pet.gender || 'N/A'}</span>
+                                    <span><i class="fas fa-map-marker-alt"></i> ${pet.location || 'N/A'}</span>
+                                </div>
+                                <div class="pet-price">
+                                    <span class="price">₹${pet.price?.toLocaleString() || '0'}</span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-contact" onclick="contactSeller('${pet.sellerId}', '${pet.name}')" style="flex: 1;">
+                                        <i class="fas fa-phone"></i> Contact Seller
+                                    </button>
+                                    ${currentUser && currentUser.uid !== pet.sellerId ? `
+                                        <button class="btn-buy" onclick="createOrder('${pet.id}', '${pet.name}', ${pet.price}, '${pet.sellerId}')" style="flex: 1; background: #4EA685; color: white; border: none; padding: 1.2rem; border-radius: 0.5rem; cursor: pointer;">
+                                            <i class="fas fa-shopping-cart"></i> Buy Now
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading pets:', error);
                 petsGrid.innerHTML = `
                     <div class="empty-state">
-                        <i class="fas fa-dog" style="font-size: 5rem; color: #ccc; margin-bottom: 1rem;"></i>
-                        <h3>No pets available yet</h3>
-                        <p>Check back soon for new pet listings!</p>
+                        <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: #ccc; margin-bottom: 1rem;"></i>
+                        <h3>Error loading pets</h3>
+                        <p>Please refresh the page and try again.</p>
                     </div>
                 `;
+            }
+        }
+        
+        // Toggle favorite
+        window.toggleFavorite = async function(petId) {
+            if (!currentUser) {
+                alert('Please login to add favorites.');
                 return;
             }
 
-            petsGrid.innerHTML = pets.map(pet => `
-                <div class="pet-card" data-type="${pet.type}" data-price="${pet.price}">
-                    <div class="pet-image">
-                        <img src="${pet.image || '../assets/Pet1.png'}" alt="${pet.name}">
-                        <span class="pet-type-badge">${pet.type}</span>
-                    </div>
-                    <div class="pet-card-content">
-                        <h3>${pet.name}</h3>
-                        <p class="pet-breed">${pet.breed}</p>
-                        <p class="pet-description">${pet.description || 'No description available'}</p>
-                        <div class="pet-details">
-                            <span><i class="fas fa-calendar"></i> ${pet.age || 'N/A'}</span>
-                            <span><i class="fas fa-venus-mars"></i> ${pet.gender || 'N/A'}</span>
-                            <span><i class="fas fa-map-marker-alt"></i> ${pet.location || 'N/A'}</span>
-                        </div>
-                        <div class="pet-price">
-                            <span class="price">₹${pet.price?.toLocaleString() || '0'}</span>
-                        </div>
-                        <button class="btn-contact" onclick="contactSeller('${pet.sellerId}', '${pet.name}')">
-                            <i class="fas fa-phone"></i> Contact Seller
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
+            try {
+                const favRef = doc(db, 'favorites', currentUser.uid);
+                const favSnap = await getDoc(favRef);
+                
+                let favoriteIds = [];
+                if (favSnap.exists()) {
+                    favoriteIds = favSnap.data().petIds || [];
+                }
+
+                const index = favoriteIds.indexOf(petId);
+                if (index > -1) {
+                    // Remove from favorites
+                    favoriteIds.splice(index, 1);
+                } else {
+                    // Add to favorites
+                    favoriteIds.push(petId);
+                }
+
+                await setDoc(favRef, {
+                    userId: currentUser.uid,
+                    petIds: favoriteIds,
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+
+                // Reload pets to update favorite icons
+                loadPets();
+            } catch (error) {
+                console.error('Error toggling favorite:', error);
+                alert('Error updating favorite. Please try again.');
+            }
+        };
+        
+        // Create order
+        window.createOrder = async function(petId, petName, price, sellerId) {
+            if (!currentUser) {
+                alert('Please login to buy pets.');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to buy ${petName} for ₹${price.toLocaleString()}?`)) {
+                return;
+            }
+
+            try {
+                // Create order
+                const orderData = {
+                    buyerId: currentUser.uid,
+                    buyerName: currentUser.displayName,
+                    buyerEmail: currentUser.email,
+                    petId: petId,
+                    petName: petName,
+                    sellerId: sellerId,
+                    price: price,
+                    status: 'pending', // pending, confirmed, completed, cancelled
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                };
+
+                const orderRef = await addDoc(collection(db, 'orders'), orderData);
+
+                // Create transaction
+                const transactionData = {
+                    orderId: orderRef.id,
+                    buyerId: currentUser.uid,
+                    sellerId: sellerId,
+                    amount: price,
+                    type: 'purchase',
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                };
+
+                await addDoc(collection(db, 'transactions'), transactionData);
+
+                // Update pet status to pending
+                const petRef = doc(db, 'pets', petId);
+                await updateDoc(petRef, {
+                    status: 'pending',
+                    orderId: orderRef.id,
+                    updatedAt: serverTimestamp()
+                });
+
+                alert(`Order created successfully! Order ID: ${orderRef.id}`);
+                loadPets();
+            } catch (error) {
+                console.error('Error creating order:', error);
+                alert('Error creating order. Please try again.');
+            }
+        };
 
         // Search and filter functionality
         document.getElementById('search-input')?.addEventListener('input', filterPets);
@@ -234,8 +409,21 @@
         }
 
         // Contact seller function
-        window.contactSeller = function(sellerId, petName) {
-            alert(`Contacting seller for ${petName}. This feature will be connected to the database.`);
+        window.contactSeller = async function(sellerId, petName) {
+            try {
+                const sellerRef = doc(db, 'users', sellerId);
+                const sellerSnap = await getDoc(sellerRef);
+                
+                if (sellerSnap.exists()) {
+                    const seller = sellerSnap.data();
+                    alert(`Contact Seller for ${petName}:\n\nName: ${seller.displayName || 'N/A'}\nEmail: ${seller.email || 'N/A'}\n\nYou can contact them via email.`);
+                } else {
+                    alert(`Contacting seller for ${petName}. Please check your email for seller contact details.`);
+                }
+            } catch (error) {
+                console.error('Error getting seller info:', error);
+                alert(`Contacting seller for ${petName}. Please check your email for seller contact details.`);
+            }
         };
 
         // Load pets on page load

@@ -143,10 +143,11 @@
     <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
     <script src="../js/script.js"></script>
     
-    <!-- Firebase Authentication for Sell Page -->
+    <!-- Firebase Authentication and Firestore for Sell Page -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, getDocs, query, where, doc, updateDoc, deleteDoc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         
         // Firebase configuration
         const firebaseConfig = {
@@ -162,6 +163,7 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
         // Get DOM elements
         const loginLink = document.getElementById('login-link');
@@ -209,7 +211,7 @@
         });
 
         // Add pet form submission
-        addPetForm?.addEventListener('submit', (e) => {
+        addPetForm?.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             if (!currentUser) {
@@ -218,96 +220,213 @@
                 return;
             }
 
-            const formData = new FormData(addPetForm);
-            const petData = {
-                id: Date.now().toString(),
-                name: formData.get('petName'),
-                type: formData.get('petType'),
-                breed: formData.get('petBreed'),
-                age: formData.get('petAge'),
-                gender: formData.get('petGender'),
-                price: parseInt(formData.get('petPrice')),
-                location: formData.get('petLocation'),
-                image: formData.get('petImage') || '../assets/Pet1.png',
-                description: formData.get('petDescription'),
-                sellerId: currentUser.uid,
-                sellerName: currentUser.displayName,
-                sellerEmail: currentUser.email,
-                createdAt: new Date().toISOString()
-            };
+            try {
+                const formData = new FormData(addPetForm);
+                
+                // Check if in edit mode
+                if (window.isEditMode && window.currentEditPetId) {
+                    // Update existing pet
+                    const petRef = doc(db, 'pets', window.currentEditPetId);
+                    const updatedData = {
+                        name: formData.get('petName'),
+                        type: formData.get('petType'),
+                        breed: formData.get('petBreed'),
+                        age: formData.get('petAge'),
+                        gender: formData.get('petGender'),
+                        price: parseInt(formData.get('petPrice')),
+                        location: formData.get('petLocation'),
+                        image: formData.get('petImage') || '../assets/Pet1.png',
+                        description: formData.get('petDescription'),
+                        updatedAt: serverTimestamp()
+                    };
 
-            // Save to localStorage (temporary - will be replaced with DB)
-            const pets = JSON.parse(localStorage.getItem('pets') || '[]');
-            pets.push(petData);
-            localStorage.setItem('pets', JSON.stringify(pets));
+                    await updateDoc(petRef, updatedData);
+                    alert('Pet listing updated successfully!');
+                    
+                    // Reset edit mode
+                    window.isEditMode = false;
+                    window.currentEditPetId = null;
+                    document.querySelector('.btn-submit').innerHTML = '<i class="fas fa-plus"></i> Add Pet Listing';
+                } else {
+                    // Create new pet
+                    const petData = {
+                        name: formData.get('petName'),
+                        type: formData.get('petType'),
+                        breed: formData.get('petBreed'),
+                        age: formData.get('petAge'),
+                        gender: formData.get('petGender'),
+                        price: parseInt(formData.get('petPrice')),
+                        location: formData.get('petLocation'),
+                        image: formData.get('petImage') || '../assets/Pet1.png',
+                        description: formData.get('petDescription'),
+                        sellerId: currentUser.uid,
+                        sellerName: currentUser.displayName,
+                        sellerEmail: currentUser.email,
+                        status: 'available', // available, sold, pending
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    };
 
-            alert('Pet listing added successfully!');
-            addPetForm.reset();
-            loadMyPets();
+                    // Save to Firestore
+                    await addDoc(collection(db, 'pets'), petData);
+
+                    // Also save/update user data in Firestore
+                    await saveUserData(currentUser);
+
+                    alert('Pet listing added successfully!');
+                }
+
+                addPetForm.reset();
+                loadMyPets();
+            } catch (error) {
+                console.error('Error saving pet:', error);
+                alert('Error saving pet listing. Please try again.');
+            }
         });
 
-        // Load seller's pets
-        function loadMyPets() {
+        // Save/Update user data in Firestore
+        async function saveUserData(user) {
+            try {
+                const userRef = doc(db, 'users', user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                const userData = {
+                    uid: user.uid,
+                    displayName: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL || null,
+                    updatedAt: serverTimestamp()
+                };
+
+                if (!userSnap.exists()) {
+                    // Create new user document
+                    userData.createdAt = serverTimestamp();
+                    await setDoc(userRef, userData);
+                } else {
+                    // Update existing user
+                    await updateDoc(userRef, userData);
+                }
+            } catch (error) {
+                console.error('Error saving user data:', error);
+            }
+        }
+
+        // Load seller's pets from Firestore
+        async function loadMyPets() {
             if (!currentUser) return;
 
-            const pets = JSON.parse(localStorage.getItem('pets') || '[]');
-            const myPets = pets.filter(pet => pet.sellerId === currentUser.uid);
+            try {
+                const q = query(collection(db, 'pets'), where('sellerId', '==', currentUser.uid));
+                const querySnapshot = await getDocs(q);
+                
+                const myPets = [];
+                querySnapshot.forEach((doc) => {
+                    myPets.push({ id: doc.id, ...doc.data() });
+                });
 
-            if (myPets.length === 0) {
-                myPetsGrid.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-dog" style="font-size: 5rem; color: #ccc; margin-bottom: 1rem;"></i>
-                        <h3>No listings yet</h3>
-                        <p>Add your first pet listing above!</p>
-                    </div>
-                `;
-                return;
+                if (myPets.length === 0) {
+                    myPetsGrid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-dog" style="font-size: 5rem; color: #ccc; margin-bottom: 1rem;"></i>
+                            <h3>No listings yet</h3>
+                            <p>Add your first pet listing above!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                myPetsGrid.innerHTML = myPets.map(pet => {
+                    const createdAt = pet.createdAt?.toDate ? pet.createdAt.toDate().toLocaleDateString() : 'N/A';
+                    return `
+                        <div class="pet-card">
+                            <div class="pet-image">
+                                <img src="${pet.image || '../assets/Pet1.png'}" alt="${pet.name}">
+                                <span class="pet-type-badge">${pet.type}</span>
+                            </div>
+                            <div class="pet-card-content">
+                                <h3>${pet.name}</h3>
+                                <p class="pet-breed">${pet.breed}</p>
+                                <p class="pet-description">${pet.description}</p>
+                                <div class="pet-details">
+                                    <span><i class="fas fa-calendar"></i> ${pet.age}</span>
+                                    <span><i class="fas fa-venus-mars"></i> ${pet.gender}</span>
+                                    <span><i class="fas fa-map-marker-alt"></i> ${pet.location}</span>
+                                </div>
+                                <div class="pet-price">
+                                    <span class="price">₹${pet.price?.toLocaleString() || '0'}</span>
+                                    <span style="font-size: 1.2rem; color: #666; margin-left: 1rem;">Status: ${pet.status || 'available'}</span>
+                                </div>
+                                <div class="pet-card-actions">
+                                    <button class="btn-edit" onclick="editPet('${pet.id}')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn-delete" onclick="deletePet('${pet.id}')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading pets:', error);
+                alert('Error loading your pet listings. Please refresh the page.');
             }
-
-            myPetsGrid.innerHTML = myPets.map(pet => `
-                <div class="pet-card">
-                    <div class="pet-image">
-                        <img src="${pet.image || '../assets/Pet1.png'}" alt="${pet.name}">
-                        <span class="pet-type-badge">${pet.type}</span>
-                    </div>
-                    <div class="pet-card-content">
-                        <h3>${pet.name}</h3>
-                        <p class="pet-breed">${pet.breed}</p>
-                        <p class="pet-description">${pet.description}</p>
-                        <div class="pet-details">
-                            <span><i class="fas fa-calendar"></i> ${pet.age}</span>
-                            <span><i class="fas fa-venus-mars"></i> ${pet.gender}</span>
-                            <span><i class="fas fa-map-marker-alt"></i> ${pet.location}</span>
-                        </div>
-                        <div class="pet-price">
-                            <span class="price">₹${pet.price?.toLocaleString() || '0'}</span>
-                        </div>
-                        <div class="pet-card-actions">
-                            <button class="btn-edit" onclick="editPet('${pet.id}')">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="btn-delete" onclick="deletePet('${pet.id}')">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
         }
 
         // Edit pet function
-        window.editPet = function(petId) {
-            alert('Edit functionality will be connected to the database.');
+        window.editPet = async function(petId) {
+            try {
+                const petRef = doc(db, 'pets', petId);
+                const petSnap = await getDoc(petRef);
+                
+                if (!petSnap.exists()) {
+                    alert('Pet listing not found.');
+                    return;
+                }
+
+                const pet = petSnap.data();
+                
+                // Populate form with existing data
+                document.getElementById('pet-name').value = pet.name || '';
+                document.getElementById('pet-type').value = pet.type || '';
+                document.getElementById('pet-breed').value = pet.breed || '';
+                document.getElementById('pet-age').value = pet.age || '';
+                document.getElementById('pet-gender').value = pet.gender || '';
+                document.getElementById('pet-price').value = pet.price || '';
+                document.getElementById('pet-location').value = pet.location || '';
+                document.getElementById('pet-image').value = pet.image || '';
+                document.getElementById('pet-description').value = pet.description || '';
+
+                // Scroll to form
+                document.querySelector('.add-pet-form-container').scrollIntoView({ behavior: 'smooth' });
+
+                // Change submit button text
+                const submitBtn = document.querySelector('.btn-submit');
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Pet Listing';
+                
+                // Set edit mode
+                window.isEditMode = true;
+                window.currentEditPetId = petId;
+            } catch (error) {
+                console.error('Error loading pet for edit:', error);
+                alert('Error loading pet details. Please try again.');
+            }
         };
 
         // Delete pet function
-        window.deletePet = function(petId) {
-            if (confirm('Are you sure you want to delete this listing?')) {
-                const pets = JSON.parse(localStorage.getItem('pets') || '[]');
-                const updatedPets = pets.filter(pet => pet.id !== petId);
-                localStorage.setItem('pets', JSON.stringify(updatedPets));
-                loadMyPets();
+        window.deletePet = async function(petId) {
+            if (!confirm('Are you sure you want to delete this listing?')) {
+                return;
+            }
+
+            try {
+                await deleteDoc(doc(db, 'pets', petId));
                 alert('Pet listing deleted successfully!');
+                loadMyPets();
+            } catch (error) {
+                console.error('Error deleting pet:', error);
+                alert('Error deleting pet listing. Please try again.');
             }
         };
     </script>

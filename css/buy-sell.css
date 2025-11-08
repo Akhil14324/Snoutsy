@@ -139,6 +139,37 @@
     text-transform: capitalize;
 }
 
+.favorite-btn {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1.6rem;
+    color: #999;
+}
+
+.favorite-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+}
+
+.favorite-btn.active {
+    color: #DB4437;
+}
+
+.favorite-btn.active i {
+    color: #DB4437;
+}
+
 .pet-card-content {
     padding: 2rem;
 }
