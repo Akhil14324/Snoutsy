@@ -59,30 +59,24 @@ window.addEventListener("scroll", function () {
 //   loginBtn.style.display = "block";
 //   logoutBtn.style.display = "none";
 // });
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/14.24.0/firebase-app.js";
-import { getAuth,googleAuthProvider,signInWithPopup } from "https://www.gstatic.com/firebasejs/14.24.0/firebase-auth.js";
+// Basic JavaScript for navigation and UI interactions
+// Firebase is already handled in individual HTML files
+
+let menu = document.querySelector("#menu-btn");
 
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAZnkTV-mK0F7Q4Fm5OeK_vRPHFgGt6Gms",
-  authDomain: "snoutsy-df81c.firebaseapp.com",
-  projectId: "snoutsy-df81c",
-  storageBucket: "snoutsy-df81c.firebasestorage.app",
-  messagingSenderId: "636456747643",
-  appId: "1:636456747643:web:f62ed4b7fe0b3217b998de",
-  measurementId: "G-G13VVSSN6F"
+menu.onclick = () => {
+  menu.classList.toggle("fa-times");
+  navbar.classList.toggle("active");
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+window.onscroll = () => {
+  menu.classList.remove("fa-times");
+  navbar.classList.remove("active");
+};
 
-const provider = new googleAuthProvider();
-const auth = getAuth();
-auth.languageCode = 'en';
-
-const googleLogin = document.getElementById("googleLoginBtn");
-googleLogin.addEventListener("click", function() {
-  alert(5)
+window.addEventListener("scroll", function () {
+  const nav = document.querySelector("header");
+  nav.classList.toggle("sticky", window.scrollY)
 });
 

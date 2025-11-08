@@ -142,6 +142,7 @@
 
     <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
     <script src="../js/script.js"></script>
+    <script src="../js/popup.js"></script>
     
     <!-- Firebase Authentication and Firestore for Sell Page -->
     <script type="module">
@@ -206,7 +207,7 @@
                 window.location.href = './login.html';
             } catch (error) {
                 console.error('Error signing out:', error);
-                alert('Error signing out. Please try again.');
+                popupManager.error('Sign Out Error', 'Error signing out. Please try again.');
             }
         });
 
@@ -215,7 +216,7 @@
             e.preventDefault();
             
             if (!currentUser) {
-                alert('Please login to add a pet listing.');
+                popupManager.warning('Login Required', 'Please login to add a pet listing.');
                 window.location.href = './login.html';
                 return;
             }
@@ -241,7 +242,7 @@
                     };
 
                     await updateDoc(petRef, updatedData);
-                    alert('Pet listing updated successfully!');
+                    popupManager.success('Success!', 'Pet listing updated successfully!');
                     
                     // Reset edit mode
                     window.isEditMode = false;
@@ -273,14 +274,14 @@
                     // Also save/update user data in Firestore
                     await saveUserData(currentUser);
 
-                    alert('Pet listing added successfully!');
+                    popupManager.success('Success!', 'Pet listing added successfully!');
                 }
 
                 addPetForm.reset();
                 loadMyPets();
             } catch (error) {
                 console.error('Error saving pet:', error);
-                alert('Error saving pet listing. Please try again.');
+                popupManager.error('Error', 'Error saving pet listing. Please try again.');
             }
         });
 
@@ -370,7 +371,7 @@
                 }).join('');
             } catch (error) {
                 console.error('Error loading pets:', error);
-                alert('Error loading your pet listings. Please refresh the page.');
+                popupManager.error('Loading Error', 'Error loading your pet listings. Please refresh the page.');
             }
         }
 
@@ -381,7 +382,7 @@
                 const petSnap = await getDoc(petRef);
                 
                 if (!petSnap.exists()) {
-                    alert('Pet listing not found.');
+                    popupManager.error('Not Found', 'Pet listing not found.');
                     return;
                 }
 
@@ -410,7 +411,7 @@
                 window.currentEditPetId = petId;
             } catch (error) {
                 console.error('Error loading pet for edit:', error);
-                alert('Error loading pet details. Please try again.');
+                popupManager.error('Loading Error', 'Error loading pet details. Please try again.');
             }
         };
 
@@ -422,11 +423,11 @@
 
             try {
                 await deleteDoc(doc(db, 'pets', petId));
-                alert('Pet listing deleted successfully!');
+                popupManager.success('Deleted!', 'Pet listing deleted successfully!');
                 loadMyPets();
             } catch (error) {
                 console.error('Error deleting pet:', error);
-                alert('Error deleting pet listing. Please try again.');
+                popupManager.error('Delete Error', 'Error deleting pet listing. Please try again.');
             }
         };
     </script>

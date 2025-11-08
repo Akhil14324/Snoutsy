@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Accessories - Snoutsy</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/services.css">
+    <link rel="shortcut icon" href="../assets/Favicon.ico" type="image/jpeg">
+    <style>
+        .accessories-hero {
+            background: linear-gradient(135deg, var(--orange), #FF9800);
+            color: white;
+            padding: 4rem 9%;
+            text-align: center;
+            margin-top: 8rem;
+        }
+        
+        .accessories-hero h1 {
+            color: white;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .accessories-hero p {
+            font-size: 1.8rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .categories-section {
+            padding: 4rem 9%;
+            background: #f9f9f9;
+        }
+        
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .category-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .category-card i {
+            font-size: 3rem;
+            color: var(--orange);
+            margin-bottom: 1rem;
+        }
+        
+        .category-card h3 {
+            color: var(--black);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .products-section {
+            padding: 4rem 9%;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: #ccc;
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+        }
+        
+        .product-name {
+            color: var(--black);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-description {
+            color: var(--light-color);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .product-price {
+            color: var(--orange);
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .add-to-cart {
+            background: var(--orange);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+        
+        .add-to-cart:hover {
+            background: #e68900;
+        }
+        
+        .cart-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .cart-popup h3 {
+            color: var(--black);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .cart-popup-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .cart-popup button {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .continue-shopping {
+            background: #ddd;
+            color: var(--black);
+        }
+        
+        .continue-shopping:hover {
+            background: #ccc;
+        }
+        
+        .view-cart {
+            background: var(--orange);
+            color: white;
+        }
+        
+        .view-cart:hover {
+            background: #e68900;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .category-filter {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .filter-btn {
+            background: white;
+            border: 2px solid var(--orange);
+            color: var(--orange);
+            padding: 0.8rem 1.5rem;
+            margin: 0 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--orange);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html" class="logo"><i class="fa-solid fa-paw"></i>Snoutsy</span></a>
+        <nav class="navbar">
+            <a href="../index.html">Home</a>
+            <a href="./services.html">Services</a>
+            <a href="./about.html">About Us</a>
+            <a href="./contact.html">Contact Us</a>
+            <a href="./buy.html">Buy</a>
+            <a href="./sell.html">Sell</a>
+            <a href="./login.html" class="login-btn">Login</a>
+        </nav>
+        <i id="menu-btn" class="fas fa-bars"></i>
+    </header>
+
+    <section class="accessories-hero">
+        <h1>Pet Accessories</h1>
+        <p>Everything your furry friend needs! From toys to grooming tools, we've got it all.</p>
+    </section>
+
+    <section class="categories-section">
+        <h1 class="heading">Shop by Category</h1>
+        <div class="categories-grid">
+            <div class="category-card" onclick="filterProducts('toys')">
+                <i class="fas fa-bone"></i>
+                <h3>Toys & Games</h3>
+                <p>Keep your pet entertained and active</p>
+            </div>
+            <div class="category-card" onclick="filterProducts('grooming')">
+                <i class="fas fa-cut"></i>
+                <h3>Grooming</h3>
+                <p>Keep your pet clean and beautiful</p>
+            </div>
+            <div class="category-card" onclick="filterProducts('feeding')">
+                <i class="fas fa-bowl-food"></i>
+                <h3>Feeding Supplies</h3>
+                <p>Bowls, feeders, and food storage</p>
+            </div>
+            <div class="category-card" onclick="filterProducts('collars')">
+                <i class="fas fa-collar"></i>
+                <h3>Collars & Leashes</h3>
+                <p>Safe and stylish walking gear</p>
+            </div>
+            <div class="category-card" onclick="filterProducts('beds')">
+                <i class="fas fa-bed"></i>
+                <h3>Beds & Furniture</h3>
+                <p>Comfortable resting places</p>
+            </div>
+            <div class="category-card" onclick="filterProducts('health')">
+                <i class="fas fa-heart-pulse"></i>
+                <h3>Health & Wellness</h3>
+                <p>Vitamins, supplements, and care</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="products-section">
+        <h1 class="heading">Featured Products</h1>
+        <div class="category-filter">
+            <button class="filter-btn active" onclick="filterProducts('all')">All Products</button>
+            <button class="filter-btn" onclick="filterProducts('toys')">Toys</button>
+            <button class="filter-btn" onclick="filterProducts('grooming')">Grooming</button>
+            <button class="filter-btn" onclick="filterProducts('feeding')">Feeding</button>
+            <button class="filter-btn" onclick="filterProducts('collars')">Collars</button>
+        </div>
+        <div class="products-grid" id="products-grid">
+            <!-- Products will be dynamically generated -->
+        </div>
+    </section>
+
+    <div class="overlay" id="overlay" onclick="closeCartPopup()"></div>
+    <div class="cart-popup" id="cart-popup">
+        <h3>Product Added to Cart!</h3>
+        <p>Your item has been added to the cart successfully.</p>
+        <div class="cart-popup-buttons">
+            <button class="continue-shopping" onclick="closeCartPopup()">Continue Shopping</button>
+            <button class="view-cart" onclick="viewCart()">View Cart</button>
+        </div>
+    </div>
+
+    <section class="footer">
+        <div class="footer-content">
+           <h3><i class="fa-solid fa-paw"></i>Snoutsy</h3> 
+           <p>Snoutsy is a trusted platform for buying, selling, and adopting pets. We connect verified users to ensure secure and responsible pet ownership.</p>
+           <ul class="socials">
+            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+            <li><a href="#"><i class="fa-brands fa-google"></i></a></li>
+            <li><a href="#"><i class="fa fa-youtube"></i></a></li>
+            <li><a href="#"><i class="fa fa-linkedin-square"></i></a></li>
+         </ul>
+        </div>
+    </section>
+    <div class="footer-bottom">
+       <p>copyright &copy;2023 <a href="#"></a>Snoutsy.</p>
+    </div>
+
+    <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
+    <script src="../js/popup.js"></script>
+    <script>
+        // Product data
+        const products = [
+            {
+                id: 1,
+                name: "Interactive Squeaky Toy",
+                description: "Durable rubber toy with squeaker for hours of fun",
+                price: 299,
+                category: "toys",
+                icon: "🎾"
+            },
+            {
+                id: 2,
+                name: "Professional Pet Brush",
+                description: "Stainless steel bristles for effective grooming",
+                price: 449,
+                category: "grooming",
+                icon: "🧽"
+            },
+            {
+                id: 3,
+                name: "Stainless Steel Food Bowl",
+                description: "Non-slip base, dishwasher safe, 500ml capacity",
+                price: 199,
+                category: "feeding",
+                icon: "🥣"
+            },
+            {
+                id: 4,
+                name: "Adjustable Nylon Collar",
+                description: "Comfortable fit with quick-release buckle",
+                price: 349,
+                category: "collars",
+                icon: "🎗️"
+            },
+            {
+                id: 5,
+                name: "Cozy Pet Bed",
+                description: "Soft plush material, machine washable",
+                price: 899,
+                category: "beds",
+                icon: "🛏️"
+            },
+            {
+                id: 6,
+                name: "Dental Care Kit",
+                description: "Toothbrush and toothpaste for fresh breath",
+                price: 599,
+                category: "health",
+                icon: "🦷"
+            },
+            {
+                id: 7,
+                name: "Rope Tug Toy",
+                description: "Natural cotton rope for interactive play",
+                price: 249,
+                category: "toys",
+                icon: "🪢"
+            },
+            {
+                id: 8,
+                name: "Pet Nail Clippers",
+                description: "Safety guard prevents over-cutting",
+                price: 379,
+                category: "grooming",
+                icon: "✂️"
+            }
+        ];
+
+        let cart = [];
+        let currentFilter = 'all';
+
+        function renderProducts(category = 'all') {
+            const grid = document.getElementById('products-grid');
+            const filteredProducts = category === 'all' ? products : products.filter(p => p.category === category);
+            
+            grid.innerHTML = filteredProducts.map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                        ${product.icon}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">${product.name}</h3>
+                        <p class="product-description">${product.description}</p>
+                        <div class="product-price">₹${product.price}</div>
+                        <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Cart</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterProducts(category) {
+            currentFilter = category;
+            renderProducts(category);
+            
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            cart.push(product);
+            
+            // Show popup
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('cart-popup').style.display = 'block';
+            
+            // Update cart count (if you have a cart counter)
+            updateCartCount();
+        }
+
+        function closeCartPopup() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('cart-popup').style.display = 'none';
+        }
+
+        function viewCart() {
+            closeCartPopup();
+            popupManager.info('Cart functionality would be implemented here. Items in cart: ' + cart.length);
+        }
+
+        function updateCartCount() {
+            // This would update a cart counter in the header
+            console.log('Cart updated:', cart.length, 'items');
+        }
+
+        // Initialize products
+        renderProducts();
+    </script>
+    <script src="../js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Adoption - Snoutsy</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/services.css">
+    <link rel="shortcut icon" href="../assets/Favicon.ico" type="image/jpeg">
+    <style>
+        .adoption-hero {
+            background: linear-gradient(135deg, var(--green), #4CAF50);
+            color: white;
+            padding: 4rem 9%;
+            text-align: center;
+            margin-top: 8rem;
+        }
+        
+        .adoption-hero h1 {
+            color: white;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .adoption-hero p {
+            font-size: 1.8rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .adoption-benefits {
+            padding: 4rem 9%;
+            background: #f9f9f9;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .benefit-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .benefit-card i {
+            font-size: 3rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+        }
+        
+        .benefit-card h3 {
+            color: var(--black);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .adoption-process {
+            padding: 4rem 9%;
+        }
+        
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .step {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .step-number {
+            background: var(--green);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+        }
+        
+        .available-pets {
+            padding: 4rem 9%;
+            background: #f9f9f9;
+        }
+        
+        .pets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .pet-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .pet-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .pet-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .pet-card-content {
+            padding: 1.5rem;
+        }
+        
+        .pet-card h3 {
+            color: var(--black);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .pet-card .breed {
+            color: var(--light-color);
+            font-size: 1.4rem;
+        }
+        
+        .pet-card .age {
+            color: var(--green);
+            font-weight: 500;
+            margin: 1rem 0;
+        }
+        
+        .adopt-btn {
+            background: var(--green);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+        
+        .adopt-btn:hover {
+            background: #45a049;
+        }
+        
+        .adoption-form {
+            padding: 4rem 9%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 2rem;
+        }
+        
+        .form-group label {
+            display: block;
+            color: var(--black);
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 0.5rem;
+            font-size: 1.6rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--green);
+            outline: none;
+        }
+        
+        .submit-btn {
+            background: var(--green);
+            color: white;
+            padding: 1.5rem 3rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html" class="logo"><i class="fa-solid fa-paw"></i>Snoutsy</span></a>
+        <nav class="navbar">
+            <a href="../index.html">Home</a>
+            <a href="./services.html">Services</a>
+            <a href="./about.html">About Us</a>
+            <a href="./contact.html">Contact Us</a>
+            <a href="./buy.html">Buy</a>
+            <a href="./sell.html">Sell</a>
+            <a href="./login.html" class="login-btn">Login</a>
+        </nav>
+        <i id="menu-btn" class="fas fa-bars"></i>
+    </header>
+
+    <section class="adoption-hero">
+        <h1>Pet Adoption</h1>
+        <p>Give a loving home to a pet in need. Adopt, don't shop - change a life today!</p>
+    </section>
+
+    <section class="adoption-benefits">
+        <h1 class="heading">Why Adopt?</h1>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <i class="fas fa-heart"></i>
+                <h3>Save a Life</h3>
+                <p>By adopting, you're giving a homeless pet a second chance at life and love.</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-dollar-sign"></i>
+                <h3>Cost Effective</h3>
+                <p>Adoption fees are much lower than buying from breeders or pet stores.</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Health Guaranteed</h3>
+                <p>All our adopted pets are vaccinated, dewormed, and health-checked.</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-users"></i>
+                <h3>Support Community</h3>
+                <p>Your adoption supports local shelters and rescue organizations.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="adoption-process">
+        <h1 class="heading">Adoption Process</h1>
+        <div class="process-steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Browse Pets</h3>
+                <p>Explore our available pets and find your perfect match.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Submit Application</h3>
+                <p>Fill out our adoption application with your details.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Home Visit</h3>
+                <p>Our team will visit your home to ensure it's pet-friendly.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Welcome Home</h3>
+                <p>Take your new family member home with our support.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="available-pets">
+        <h1 class="heading">Pets Available for Adoption</h1>
+        <div class="pets-grid">
+            <div class="pet-card">
+                <img src="../assets/Pet1.png" alt="Buddy">
+                <div class="pet-card-content">
+                    <h3>Buddy</h3>
+                    <p class="breed">Golden Retriever</p>
+                    <p class="age">2 years old</p>
+                    <button class="adopt-btn" onclick="showAdoptionForm('Buddy')">Adopt Me</button>
+                </div>
+            </div>
+            <div class="pet-card">
+                <img src="../assets/Pet2.png" alt="Luna">
+                <div class="pet-card-content">
+                    <h3>Luna</h3>
+                    <p class="breed">Persian Cat</p>
+                    <p class="age">1 year old</p>
+                    <button class="adopt-btn" onclick="showAdoptionForm('Luna')">Adopt Me</button>
+                </div>
+            </div>
+            <div class="pet-card">
+                <img src="../assets/Pet3.png" alt="Max">
+                <div class="pet-card-content">
+                    <h3>Max</h3>
+                    <p class="breed">Beagle</p>
+                    <p class="age">3 years old</p>
+                    <button class="adopt-btn" onclick="showAdoptionForm('Max')">Adopt Me</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="adoption-form" id="adoption-form" style="display: none;">
+        <h1 class="heading">Adoption Application</h1>
+        <form id="adoption-form-element">
+            <div class="form-group">
+                <label for="pet-name">Pet Name</label>
+                <input type="text" id="pet-name" name="pet-name" readonly>
+            </div>
+            <div class="form-group">
+                <label for="full-name">Your Full Name</label>
+                <input type="text" id="full-name" name="full-name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Home Address</label>
+                <textarea id="address" name="address" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="experience">Pet Ownership Experience</label>
+                <select id="experience" name="experience" required>
+                    <option value="">Select your experience</option>
+                    <option value="first-time">First-time pet owner</option>
+                    <option value="some">Some experience</option>
+                    <option value="experienced">Experienced pet owner</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="reason">Why do you want to adopt this pet?</label>
+                <textarea id="reason" name="reason" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Submit Application</button>
+            <button type="button" class="submit-btn" onclick="hideAdoptionForm()" style="background: #666; margin-left: 1rem;">Cancel</button>
+        </form>
+    </section>
+
+    <section class="footer">
+        <div class="footer-content">
+           <h3><i class="fa-solid fa-paw"></i>Snoutsy</h3> 
+           <p>Snoutsy is a trusted platform for buying, selling, and adopting pets. We connect verified users to ensure secure and responsible pet ownership.</p>
+           <ul class="socials">
+            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+            <li><a href="#"><i class="fa-brands fa-google"></i></a></li>
+            <li><a href="#"><i class="fa fa-youtube"></i></a></li>
+            <li><a href="#"><i class="fa fa-linkedin-square"></i></a></li>
+         </ul>
+        </div>
+    </section>
+    <div class="footer-bottom">
+       <p>copyright &copy;2023 <a href="#"></a>Snoutsy.</p>
+    </div>
+
+    <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
+    <script src="../js/popup.js"></script>
+    <script>
+        function showAdoptionForm(petName) {
+            document.getElementById('pet-name').value = petName;
+            document.getElementById('adoption-form').style.display = 'block';
+            document.getElementById('adoption-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideAdoptionForm() {
+            document.getElementById('adoption-form').style.display = 'none';
+            document.getElementById('adoption-form-element').reset();
+        }
+
+        document.getElementById('adoption-form-element').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Here you would typically send the data to your backend
+            console.log('Adoption application submitted:', data);
+            
+            // Show success message
+            popupManager.success('Application Submitted!', 'Thank you for your adoption application! We will contact you within 24 hours to discuss the next steps.');
+            
+            // Hide form and reset
+            hideAdoptionForm();
+        });
+    </script>
+    <script src="../js/script.js"></script>
+</body>
+</html>

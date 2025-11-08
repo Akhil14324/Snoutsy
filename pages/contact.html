@@ -14,9 +14,9 @@
         <a href="../index.html" class="logo"><i class="fa-solid fa-paw"></i>Snoutsy</a>
         <nav class="navbar">
             <a href="../index.html">Home</a>
-            <a href="../pages/services.html">Services</a>
-            <a href="../pages/about.html">About Us</a>
-            <a href="../pages/contact.html">Contact Us</a>
+            <a href="./services.html">Services</a>
+            <a href="./about.html">About Us</a>
+            <a href="./contact.html">Contact Us</a>
             <a href="./buy.html">Buy</a>
             <a href="./sell.html">Sell</a>
         </nav>
@@ -31,7 +31,7 @@
                 <p class="center">
                     People can Live Chat with our support
                 </p>
-                <a href="#" class="btn">Support</a>
+                <button onclick="showSupportPopup()" class="btn support-btn">Support</button>
  
             </div>
             <div class="box">
@@ -55,18 +55,50 @@
         </div>
     </section>
 
+    <!-- Support Popup -->
+    <div id="supportPopup" class="popup-overlay">
+        <div class="popup-content">
+            <span class="close-popup" onclick="closeSupportPopup()">&times;</span>
+            <i class="fa-solid fa-headphones popup-icon"></i>
+            <h3>Support Not Available</h3>
+            <p>Our support team is currently unavailable. Please try again later or use our contact form below.</p>
+            <button onclick="closeSupportPopup()" class="btn popup-btn">OK</button>
+        </div>
+    </div>
+
     <section class="form">
         <h1 class="heading">Contact Us By Filling Form</h1>
         <div class="container">
-            <form>
-                <h3>Fill Up This Form</h3>
-                <input type="email" placeholder="Enter Your Full Name" class="box">
-                <input type="text" placeholder="Enter Your Email" class="box">
-              <input type="text" placeholder="Write About Your Problem" class="problem">
-              <input type="submit" value="Send Us" class="btn">
-          
+            <form id="contactForm" onsubmit="handleFormSubmit(event)">
+                <h3>Get In Touch</h3>
+                <div class="form-group">
+                    <input type="text" placeholder="Enter Your Full Name" class="box" name="name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Enter Your Email" class="box" name="email" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" placeholder="Enter Your Phone Number" class="box" name="phone">
+                </div>
+                <div class="form-group">
+                    <select class="box" name="subject" required>
+                        <option value="">Select Subject</option>
+                        <option value="general">General Inquiry</option>
+                        <option value="adoption">Pet Adoption</option>
+                        <option value="services">Services</option>
+                        <option value="support">Support</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="Write About Your Problem" class="box message-box" name="message" required></textarea>
+                </div>
+                <button type="submit" class="btn submit-btn">
+                    <span class="btn-text">Send Message</span>
+                    <span class="btn-loading" style="display: none;">Sending...</span>
+                </button>
             </form>
-          </div>
+        </div>
     </section>
 
 
@@ -76,11 +108,11 @@
            <h3><i class="fa-solid fa-paw"></i>Snoutsy</h3> 
            <p>Snoutsy is a trusted platform for buying, selling, and adopting pets. We connect verified users to ensure secure and responsible pet ownership.</p>
            <ul class="socials">
-            <li><a href=”#”><i class="fa fa-facebook"></i></a></li>
-            <li><a href=”#”><i class="fa fa-twitter"></i></a></li>
-            <li><a href=”#”><i class="fa-brands fa-google"></i></a></li>
-            <li><a href=”#”><i class="fa fa-youtube"></i></a></li>
-            <li><a href=”#”><i class="fa fa-linkedin-square"></i></a></li>
+            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+            <li><a href="#"><i class="fa-brands fa-google"></i></a></li>
+            <li><a href="#"><i class="fa fa-youtube"></i></a></li>
+            <li><a href="#"><i class="fa fa-linkedin-square"></i></a></li>
          </ul>
         </div>
     </section>
@@ -88,6 +120,106 @@
        <p>copyright &copy;2023 <a href=”#”></a>Snoutsy. </p>
     </div>
     <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
-    <script src="./js/script.js"></script>
+    <script src="../js/script.js"></script>
+    <!-- Universal Popup System -->
+    <script src="../js/popup.js"></script>
+    <!-- EmailJS Script for future email integration -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // Support Popup Functions
+        function showSupportPopup() {
+            document.getElementById('supportPopup').style.display = 'flex';
+        }
+
+        function closeSupportPopup() {
+            document.getElementById('supportPopup').style.display = 'none';
+        }
+
+        // Form Submit Handler
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Show loading state
+            const submitBtn = form.querySelector('.submit-btn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline';
+            submitBtn.disabled = true;
+            
+            // EmailJS Configuration (Free Email Service)
+            // You'll need to sign up at https://www.emailjs.com/ and get your credentials
+            const emailConfig = {
+                serviceID: 'service_your_service_id', // Replace with your EmailJS service ID
+                templateID: 'template_your_template_id', // Replace with your EmailJS template ID
+                publicKey: 'your_public_key' // Replace with your EmailJS public key
+            };
+
+            // For now, we'll simulate email sending and show success message
+            setTimeout(() => {
+                // Reset button state
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+                submitBtn.disabled = false;
+                
+                // Reset form first
+                form.reset();
+                
+                // Show success message using universal popup system with a slight delay
+                setTimeout(() => {
+                    popupManager.success('Success!', 'Form submitted successfully! In production, this would be sent to your email.');
+                }, 100);
+                
+            }, 2000);
+        }
+
+        function showSuccessMessage() {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.innerHTML = `
+                <div class="success-content">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <h3>Message Sent Successfully!</h3>
+                    <p>Thank you for contacting us. We'll get back to you soon!</p>
+                    <button onclick="this.parentElement.parentElement.remove()" class="btn">Close</button>
+                </div>
+            `;
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 5000);
+        }
+
+        // Close popup when clicking outside
+        window.onclick = function(event) {
+            const popup = document.getElementById('supportPopup');
+            if (event.target == popup) {
+                closeSupportPopup();
+            }
+        }
+
+        // EmailJS Integration Instructions
+        /*
+        To set up real email functionality:
+        1. Sign up at https://www.emailjs.com/
+        2. Create a new email service (Gmail, Outlook, etc.)
+        3. Create an email template with these variables:
+           - {{from_name}} - User's name
+           - {{from_email}} - User's email
+           - {{phone}} - User's phone
+           - {{subject}} - Selected subject
+           - {{message}} - User's message
+        4. Replace the emailConfig object above with your credentials
+        5. Add this script tag to your HTML:
+           <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">*/
+           </script>
+       
+    </script>
 </body>
-</html> 
+</html>

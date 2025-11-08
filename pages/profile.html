@@ -209,6 +209,7 @@
 
     <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
     <script src="../js/script.js"></script>
+    <script src="../js/popup.js"></script>
     
     <!-- Firebase Authentication and Firestore for Profile -->
     <script type="module">
@@ -562,7 +563,7 @@
         
         // View order details
         window.viewOrderDetails = function(orderId) {
-            alert(`Order Details:\n\nOrder ID: ${orderId}\n\nFull details will be displayed here.`);
+            popupManager.info(`Order Details:\n\nOrder ID: ${orderId}\n\nFull details will be displayed here.`);
         };
 
         // Monitor auth state changes
@@ -579,26 +580,26 @@
                 window.location.href = './login.html';
             } catch (error) {
                 console.error('Error signing out:', error);
-                alert('Error signing out. Please try again.');
+                popupManager.error('Error signing out. Please try again.');
             }
         });
 
         // Add Pet Button (placeholder for now)
         document.getElementById('add-pet-btn').addEventListener('click', () => {
-            alert('Add Pet functionality coming soon!');
+            popupManager.info('Add Pet functionality coming soon!');
         });
 
         // Settings update buttons (placeholder for now)
         document.getElementById('update-name-btn').addEventListener('click', () => {
-            alert('Update name functionality coming soon!');
+            popupManager.info('Update name functionality coming soon!');
         });
 
         document.getElementById('update-phone-btn').addEventListener('click', () => {
-            alert('Update phone functionality coming soon!');
+            popupManager.info('Update phone functionality coming soon!');
         });
 
         document.getElementById('update-location-btn').addEventListener('click', () => {
-            alert('Update location functionality coming soon!');
+            popupManager.info('Update location functionality coming soon!');
         });
     </script>
 </body>

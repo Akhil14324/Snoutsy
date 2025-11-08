@@ -80,7 +80,7 @@
       });
     } catch (error) {
       console.error('Firebase initialization error:', error);
-      alert('Firebase initialization failed. Check console for details.');
+      popupManager.error('Initialization Error', 'Firebase initialization failed. Check console for details.');
     }
   </script>
 
@@ -633,7 +633,7 @@
           }));
           
           // Show success message
-          alert(`Welcome, ${user.displayName}! You have successfully signed in with Google.`);
+          popupManager.success('Google Sign-In', `Welcome, ${user.displayName}! You have successfully signed in with Google.`);
           
           // Redirect to home page or dashboard
           window.location.href = '../index.html';
@@ -685,8 +685,8 @@
             detailedInfo = `\n\nMessage: ${error.message}\n\nFull error logged to console. Please check browser console (F12) for details.`;
           }
           
-          // Show alert with detailed info
-          alert(errorMessage + detailedInfo);
+          // Show popup with detailed info
+          popupManager.error('Google Sign-In Error', errorMessage + detailedInfo);
           
           // Also log to help with debugging
           console.error('User-friendly error message:', errorMessage);
@@ -745,17 +745,17 @@
         const confirmPassword = signupConfirmPassword.value;
 
         if (!username || !email || !password || !confirmPassword) {
-          alert('Please fill in all fields.');
+          popupManager.warning('Missing Information', 'Please fill in all fields.');
           return;
         }
 
         if (password.length < 6) {
-          alert('Password must be at least 6 characters long.');
+          popupManager.warning('Invalid Password', 'Password must be at least 6 characters long.');
           return;
         }
 
         if (password !== confirmPassword) {
-          alert('Passwords do not match. Please try again.');
+          popupManager.warning('Password Mismatch', 'Passwords do not match. Please try again.');
           signupConfirmPassword.focus();
           return;
         }
@@ -793,7 +793,7 @@
           photoURL: user.photoURL || null
         }));
 
-        alert(`Welcome, ${username}! Your account has been created successfully.`);
+        popupManager.success('Account Created!', `Welcome, ${username}! Your account has been created successfully.`);
         
         // Redirect to index.html
         window.location.href = '../index.html';
@@ -815,7 +815,7 @@
           errorMessage = 'Network error. Please check your internet connection.';
         }
         
-        alert(errorMessage);
+        popupManager.error('Sign Up Error', errorMessage);
       }
     });
 
@@ -826,7 +826,7 @@
         const password = signinPassword.value;
 
         if (!email || !password) {
-          alert('Please enter your email and password.');
+          popupManager.warning('Missing Information', 'Please enter your email and password.');
           return;
         }
 
@@ -871,7 +871,7 @@
           photoURL: user.photoURL || null
         }));
 
-        alert(`Welcome back, ${user.displayName || 'User'}!`);
+        popupManager.success('Welcome Back!', `Welcome back, ${user.displayName || 'User'}!`);
         
         // Redirect to index.html
         window.location.href = '../index.html';
@@ -897,7 +897,7 @@
           errorMessage = 'Too many failed attempts. Please try again later or reset your password.';
         }
         
-        alert(errorMessage);
+        popupManager.error('Sign In Error', errorMessage);
       }
     });
 
@@ -910,13 +910,13 @@
       }
 
       if (!email.includes('@')) {
-        alert('Please enter a valid email address.');
+        popupManager.warning('Invalid Email', 'Please enter a valid email address.');
         return;
       }
 
       sendPasswordResetEmail(window.firebaseAuth, email)
         .then(() => {
-          alert('Password reset email sent! Please check your inbox and follow the instructions to reset your password.');
+          popupManager.success('Email Sent!', 'Password reset email sent! Please check your inbox and follow the instructions to reset your password.');
         })
         .catch((error) => {
           console.error('Password reset error:', error);
@@ -931,7 +931,7 @@
             errorMessage = 'Network error. Please check your internet connection.';
           }
           
-          alert(errorMessage);
+          popupManager.error('Reset Error', errorMessage);
         });
     };
 
@@ -954,10 +954,46 @@
       }
     });
   </script>
-
+  <script src="../js/popup.js"></script>
 
 
 </body>
 </html>
 
 <!--googleLoginBtn-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

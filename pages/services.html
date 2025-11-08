@@ -13,9 +13,9 @@
         <a href="../index.html" class="logo"><i class="fa-solid fa-paw"></i>Snoutsy</span></a>
         <nav class="navbar">
             <a href="../index.html">Home</a>
-            <a href="../pages/services.html">Services</a>
-            <a href="../pages/about.html">About Us</a>
-            <a href="../pages/contact.html">Contact Us</a>
+            <a href="./services.html">Services</a>
+            <a href="./about.html">About Us</a>
+            <a href="./contact.html">Contact Us</a>
             <a href="./buy.html">Buy</a>
             <a href="./sell.html">Sell</a>
             <a href="./login.html" class="login-btn">Login</a>
@@ -54,37 +54,37 @@
                   </div>
                 </div>  
         
-                  <div class="box">
+                  <div class="box" onclick="window.location.href='./pet-adoption.html'" style="cursor: pointer;">
                     <i class="fa-solid fa-house-circle-check"></i>
 
                     <h3>Pet Adoption</h3>
                     <p>Adopt rescued or abandoned animals and give them a second chance at life.</p>
-                    <a href="#" class="btn">Learn More <span class="fas fa-chevron-right"></span></a>
+                    <a href="./pet-adoption.html" class="btn">Learn More <span class="fas fa-chevron-right"></span></a>
                 </div>
         
-                <div class="box">
+                <div class="box" onclick="window.location.href='./pet-accessories.html'" style="cursor: pointer;">
 <i class="fa-solid fa-bone"></i>
                   <h3>Pet Accessories</h3>
                   <p>Browse and shop for toys, grooming tools, collars, and other pet essentials.</p>
-                  <a href="#" class="btn">Learn More <span class="fas fa-chevron-right"></span></a>
+                  <a href="./pet-accessories.html" class="btn">Learn More <span class="fas fa-chevron-right"></span></a>
               </div>
         
-              <div class="box">
+              <div class="box" onclick="window.location.href='./pet-care.html'" style="cursor: pointer;">
 <i class="fa-solid fa-notes-medical"></i>
                 <h3>Pet Care Guidance</h3>
                 <p>Access expert tips and advice on pet health, training, and nutrition.</p>
-                <a href="#" class="btn">Learn More <span class="fas fa-chevron-right"></span></a>
+                <a href="./pet-care.html" class="btn">Learn More <span class="fas fa-chevron-right"></span></a>
             </div>
         
                 
         
-            <div class="box">
+            <div class="box" onclick="window.location.href='./pet-vaccinations.html'" style="cursor: pointer;">
 <i class="fa-solid fa-syringe"></i>
               <h3>Pet Vaccination & Health Records</h3>
               <p>Keep track of vaccination status and medical history in one place.</p>
-              <a href="#" class="btn">Learn More <span class="fas fa-chevron-right"></span></a>
+              <a href="./pet-vaccinations.html" class="btn">Learn More <span class="fas fa-chevron-right"></span></a>
         </div>
-         <div class="box">
+         <div class="box" onclick="showLostFoundPopup()" style="cursor: pointer;">
 <i class="fa-solid fa-magnifying-glass-location"></i>
                    <h3>Lost & Found Alerts </h3>
                    <p>Report or look for lost pets in your area through our community network.</p>
@@ -99,11 +99,11 @@
            <h3><i class="fa-solid fa-paw"></i>Snoutsy</h3> 
            <p>Snoutsy is a trusted platform for buying, selling, and adopting pets. We connect verified users to ensure secure and responsible pet ownership.</p>
            <ul class="socials">
-            <li><a href=”#”><i class="fa fa-facebook"></i></a></li>
-            <li><a href=”#”><i class="fa fa-twitter"></i></a></li>
-            <li><a href=”#”><i class="fa-brands fa-google"></i></a></li>
-            <li><a href=”#”><i class="fa fa-youtube"></i></a></li>
-            <li><a href=”#”><i class="fa fa-linkedin-square"></i></a></li>
+            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+            <li><a href="#"><i class="fa-brands fa-google"></i></a></li>
+            <li><a href="#"><i class="fa fa-youtube"></i></a></li>
+            <li><a href="#"><i class="fa fa-linkedin-square"></i></a></li>
          </ul>
         </div>
     </section>
@@ -111,6 +111,129 @@
        <p>copyright &copy;2023 <a href=”#”></a>Snoutsy.</p>
     </div>
     <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
-    <script src="./js/script.js"></script>
+    <script>
+        function showLostFoundPopup() {
+            // Create popup HTML
+            const popupHTML = `
+                <div id="lostFoundPopup" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.7);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 10000;
+                    animation: fadeIn 0.3s ease;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 3rem;
+                        border-radius: 1rem;
+                        text-align: center;
+                        max-width: 500px;
+                        width: 90%;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                        animation: slideIn 0.3s ease;
+                    ">
+                        <div style="
+                            width: 80px;
+                            height: 80px;
+                            background: var(--orange, #FF6B35);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto 2rem;
+                            color: white;
+                            font-size: 3rem;
+                        ">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h3 style="
+                            color: var(--black, #333);
+                            font-size: 2.5rem;
+                            margin-bottom: 1rem;
+                        ">Coming Soon!</h3>
+                        <p style="
+                            color: var(--light-color, #666);
+                            font-size: 1.6rem;
+                            line-height: 1.6;
+                            margin-bottom: 2rem;
+                        ">We're working hard to bring you our Lost & Found service. This feature will help reunite lost pets with their families through our community network. Stay tuned!</p>
+                        <button onclick="closeLostFoundPopup()" style="
+                            background: var(--orange, #FF6B35);
+                            color: white;
+                            border: none;
+                            padding: 1rem 2rem;
+                            border-radius: 2rem;
+                            font-size: 1.6rem;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                        ">Got it!</button>
+                    </div>
+                </div>
+                <style>
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    @keyframes slideIn {
+                        from { transform: translateY(-50px); opacity: 0; }
+                        to { transform: translateY(0); opacity: 1; }
+                    }
+                </style>
+            `;
+            
+            // Add popup to page
+            document.body.insertAdjacentHTML('beforeend', popupHTML);
+            
+            // Add event listener to close on background click
+            document.getElementById('lostFoundPopup').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeLostFoundPopup();
+                }
+            });
+        }
+        
+        function closeLostFoundPopup() {
+            const popup = document.getElementById('lostFoundPopup');
+            if (popup) {
+                popup.remove();
+            }
+        }
+        
+        // Add CSS for consistent styling
+        const style = document.createElement('style');
+        style.textContent = `
+            .box {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            
+            .box:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            }
+            
+            .box[style*="cursor: pointer"] {
+                position: relative;
+            }
+            
+            .box[style*="cursor: pointer"]:hover::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: inherit;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+    <script src="../js/script.js"></script>
 </body>
-</html> 
+</html>

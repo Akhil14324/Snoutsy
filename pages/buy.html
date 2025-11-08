@@ -94,6 +94,7 @@
 
     <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
     <script src="../js/script.js"></script>
+    <script src="../js/popup.js"></script>
     
     <!-- Firebase Authentication and Firestore for Buy Page -->
     <script type="module">
@@ -182,7 +183,7 @@
                 window.location.href = './login.html';
             } catch (error) {
                 console.error('Error signing out:', error);
-                alert('Error signing out. Please try again.');
+                popupManager.error('Error signing out. Please try again.');
             }
         });
 
@@ -277,7 +278,7 @@
         // Toggle favorite
         window.toggleFavorite = async function(petId) {
             if (!currentUser) {
-                alert('Please login to add favorites.');
+                popupManager.warning('Please login to add favorites.');
                 return;
             }
 
@@ -309,14 +310,14 @@
                 loadPets();
             } catch (error) {
                 console.error('Error toggling favorite:', error);
-                alert('Error updating favorite. Please try again.');
+                popupManager.error('Error updating favorite. Please try again.');
             }
         };
         
         // Create order
         window.createOrder = async function(petId, petName, price, sellerId) {
             if (!currentUser) {
-                alert('Please login to buy pets.');
+                popupManager.warning('Please login to buy pets.');
                 return;
             }
 
@@ -362,11 +363,11 @@
                     updatedAt: serverTimestamp()
                 });
 
-                alert(`Order created successfully! Order ID: ${orderRef.id}`);
+                popupManager.success(`Order created successfully! Order ID: ${orderRef.id}`);
                 loadPets();
             } catch (error) {
                 console.error('Error creating order:', error);
-                alert('Error creating order. Please try again.');
+                popupManager.error('Error creating order. Please try again.');
             }
         };
 
@@ -416,13 +417,13 @@
                 
                 if (sellerSnap.exists()) {
                     const seller = sellerSnap.data();
-                    alert(`Contact Seller for ${petName}:\n\nName: ${seller.displayName || 'N/A'}\nEmail: ${seller.email || 'N/A'}\n\nYou can contact them via email.`);
+                    popupManager.info(`Contact Seller for ${petName}:\n\nName: ${seller.displayName || 'N/A'}\nEmail: ${seller.email || 'N/A'}\n\nYou can contact them via email.`);
                 } else {
-                    alert(`Contacting seller for ${petName}. Please check your email for seller contact details.`);
+                    popupManager.info(`Contacting seller for ${petName}. Please check your email for seller contact details.`);
                 }
             } catch (error) {
                 console.error('Error getting seller info:', error);
-                alert(`Contacting seller for ${petName}. Please check your email for seller contact details.`);
+                popupManager.info(`Contacting seller for ${petName}. Please check your email for seller contact details.`);
             }
         };
 

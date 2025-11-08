@@ -136,11 +136,11 @@
            <h3><i class="fa-solid fa-paw"></i>Snoutsy</span></h3> 
            <p>Snoutsy is a trusted platform for buying, selling, and adopting pets. We connect verified users to ensure secure and responsible pet ownership.</p>
            <ul class="socials">
-            <li><a href=”#”><i class="fa fa-facebook"></i></a></li>
-            <li><a href=”#”><i class="fa fa-twitter"></i></a></li>
-            <li><a href=”#”><i class="fa-brands fa-google"></i></a></li>
-            <li><a href=”#”><i class="fa fa-youtube"></i></a></li>
-            <li><a href=”#”><i class="fa fa-linkedin-square"></i></a></li>
+            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+            <li><a href="#"><i class="fa-brands fa-google"></i></a></li>
+                        <li><a href="#"><i class="fa fa-youtube"></i></a></li>
+                        <li><a href="#"><i class="fa fa-linkedin-square"></i></a></li>
          </ul>
         </div>
     </section>
@@ -149,6 +149,9 @@
     </section>
     <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
     <script src="./js/script.js"></script>
+    
+    <!-- Universal Popup System -->
+    <script src="./js/popup.js"></script>
   
     <!-- Firebase Authentication UI -->
     <script type="module">
@@ -258,7 +261,7 @@
                 window.location.href = './pages/login.html';
             } catch (error) {
                 console.error('Error signing out:', error);
-                alert('Error signing out. Please try again.');
+                popupManager.error('Error signing out. Please try again.');
             }
         });
 
@@ -414,4 +417,4 @@
     </script>
 
 </body>
-</html> 
+</html>

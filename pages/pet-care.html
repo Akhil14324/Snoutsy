@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Care Guidance - Snoutsy</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/services.css">
+    <link rel="shortcut icon" href="../assets/Favicon.ico" type="image/jpeg">
+    <style>
+        .care-hero {
+            background: linear-gradient(135deg, #4CAF50, var(--green));
+            color: white;
+            padding: 4rem 9%;
+            text-align: center;
+            margin-top: 8rem;
+        }
+        
+        .care-hero h1 {
+            color: white;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .care-hero p {
+            font-size: 1.8rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .care-categories {
+            padding: 4rem 9%;
+            background: #f9f9f9;
+        }
+        
+        .category-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .tab-btn {
+            background: white;
+            border: 2px solid var(--green);
+            color: var(--green);
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.6rem;
+        }
+        
+        .tab-btn:hover,
+        .tab-btn.active {
+            background: var(--green);
+            color: white;
+        }
+        
+        .care-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .care-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .care-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .care-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .care-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .care-card i {
+            font-size: 3rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+        }
+        
+        .care-card h3 {
+            color: var(--black);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .care-card p {
+            color: var(--light-color);
+            font-size: 1.4rem;
+            line-height: 1.6;
+        }
+        
+        .tips-section {
+            padding: 4rem 9%;
+        }
+        
+        .tip-item {
+            background: white;
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--box-shadow);
+            border-left: 5px solid var(--green);
+        }
+        
+        .tip-item h3 {
+            color: var(--black);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tip-item p {
+            color: var(--light-color);
+            font-size: 1.4rem;
+            line-height: 1.6;
+        }
+        
+        .emergency-section {
+            padding: 4rem 9%;
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            margin: 2rem 9%;
+            border-radius: 1rem;
+        }
+        
+        .emergency-section h2 {
+            color: #856404;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .emergency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .emergency-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .emergency-card i {
+            font-size: 2.5rem;
+            color: #dc3545;
+            margin-bottom: 1rem;
+        }
+        
+        .emergency-card h4 {
+            color: #856404;
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .emergency-card p {
+            color: #666;
+            font-size: 1.2rem;
+        }
+        
+        .seasonal-care {
+            padding: 4rem 9%;
+            background: #e8f5e8;
+        }
+        
+        .seasonal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .seasonal-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .seasonal-card h3 {
+            color: var(--green);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .checklist {
+            background: white;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 1rem;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .checklist h3 {
+            color: var(--black);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+            font-size: 1.6rem;
+        }
+        
+        .checklist-item input[type="checkbox"] {
+            margin-right: 1rem;
+            transform: scale(1.2);
+        }
+        
+        .checklist-item label {
+            cursor: pointer;
+            color: var(--light-color);
+        }
+        
+        .checklist-item input[type="checkbox"]:checked + label {
+            color: var(--green);
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html" class="logo"><i class="fa-solid fa-paw"></i>Snoutsy</span></a>
+        <nav class="navbar">
+            <a href="../index.html">Home</a>
+            <a href="./services.html">Services</a>
+            <a href="./about.html">About Us</a>
+            <a href="./contact.html">Contact Us</a>
+            <a href="./buy.html">Buy</a>
+            <a href="./sell.html">Sell</a>
+            <a href="./login.html" class="login-btn">Login</a>
+        </nav>
+        <i id="menu-btn" class="fas fa-bars"></i>
+    </header>
+
+    <section class="care-hero">
+        <h1>Pet Care Guidance</h1>
+        <p>Expert advice and comprehensive guides to help you provide the best care for your beloved pets.</p>
+    </section>
+
+    <section class="care-categories">
+        <div class="category-tabs">
+            <button class="tab-btn active" onclick="showCategory('basics')">Basic Care</button>
+            <button class="tab-btn" onclick="showCategory('nutrition')">Nutrition</button>
+            <button class="tab-btn" onclick="showCategory('health')">Health & Hygiene</button>
+            <button class="tab-btn" onclick="showCategory('training')">Training</button>
+            <button class="tab-btn" onclick="showCategory('exercise')">Exercise & Play</button>
+        </div>
+
+        <!-- Basic Care Section -->
+        <div id="basics" class="care-content active">
+            <div class="care-grid">
+                <div class="care-card">
+                    <i class="fas fa-home"></i>
+                    <h3>Creating a Safe Environment</h3>
+                    <p>Pet-proof your home by removing toxic plants, securing loose wires, and creating designated spaces for your pet to rest and play.</p>
+                </div>
+                <div class="care-card">
+                    <i class="fas fa-thermometer-half"></i>
+                    <h3>Temperature Control</h3>
+                    <p>Maintain comfortable room temperature (18-24°C) and provide warm bedding. Never leave pets in parked cars.</p>
+                </div>
+                <div class="care-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>Establishing Routines</h3>
+                    <p>Create consistent schedules for feeding, walks, playtime, and sleep. Pets thrive on predictable routines.</p>
+                </div>
+                <div class="care-card">
+                    <i class="fas fa-heart"></i>
+                    <h3>Emotional Well-being</h3>
+                    <p>Provide plenty of love, attention, and mental stimulation. Never punish physically - use positive reinforcement.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nutrition Section -->
+        <div id="nutrition" class="care-content">
+            <div class="tip-item">
+                <h3>Feeding Schedule</h3>
+                <p>Puppies (8-12 weeks): 4 meals daily. Adult dogs: 2 meals daily. Senior dogs: 2-3 smaller meals. Always provide fresh water.</p>
+            </div>
+            <div class="tip-item">
+                <h3>Food Quality</h3>
+                <p>Choose high-quality pet food appropriate for your pet's age, size, and activity level. Consult your vet for specific dietary needs.</p>
+            </div>
+            <div class="tip-item">
+                <h3>Foods to Avoid</h3>
+                <p>Never feed: chocolate, grapes, onions, garlic, xylitol (artificial sweetener), alcohol, caffeine, or cooked bones.</p>
+            </div>
+            <div class="tip-item">
+                <h3>Portion Control</h3>
+                <p>Follow feeding guidelines on pet food packaging. Adjust based on your pet's weight, activity level, and body condition.</p>
+            </div>
+        </div>
+
+        <!-- Health & Hygiene Section -->
+        <div id="health" class="care-content">
+            <div class="care-grid">
+                <div class="care-card">
+                    <i class="fas fa-bath"></i>
+                    <h3>Bathing Guidelines</h3>
+                    <p>Dogs: Every 4-6 weeks or when dirty. Use pet-specific shampoo. Cats: Generally self-cleaning, bathe only when necessary.</p>
+                </div>
+                <div class="care-card">
+                    <i class="fas fa-cut"></i>
+                    <h3>Grooming Basics</h3>
+                    <p>Brush regularly to prevent matting. Trim nails every 2-4 weeks. Clean ears weekly with vet-approved solution.</p>
+                </div>
+                <div class="care-card">
+                    <i class="fas fa-tooth"></i>
+                    <h3>Dental Care</h3>
+                    <p>Brush teeth 2-3 times weekly with pet toothpaste. Provide dental chews and schedule professional cleanings annually.</p>
+                </div>
+                <div class="care-card">
+                    <i class="fas fa-stethoscope"></i>
+                    <h3>Regular Check-ups</h3>
+                    <p>Schedule vet visits at least annually. Keep vaccinations current. Monitor for changes in behavior, appetite, or energy.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Training Section -->
+        <div id="training" class="care-content">
+            <div class="tip-item">
+                <h3>Basic Commands</h3>
+                <p>Start with: Sit, Stay, Come, Down, Leave it. Use positive reinforcement with treats and praise. Keep training sessions short (5-10 minutes).</p>
+            </div>
+            <div class="tip-item">
+                <h3>House Training</h3>
+                <p>Take puppies outside every 2 hours and after meals. Praise immediately when they eliminate outside. Clean accidents with enzymatic cleaner.</p>
+            </div>
+            <div class="tip-item">
+                <h3>Socialization</h3>
+                <p>Expose pets to various people, animals, and environments between 3-14 weeks old. Continue socialization throughout life.</p>
+            </div>
+            <div class="tip-item">
+                <h3>Problem Behaviors</h3>
+                <p>Address barking, chewing, and aggression early. Consult professional trainers for persistent issues. Never use physical punishment.</p>
+            </div>
+        </div>
+
+        <!-- Exercise Section -->
+        <div id="exercise" class="care-content">
+            <div class="care-grid">
+                <div class="care-card">
+                    <i class="fas fa-walking"></i>
+                    <h3>Daily Walks</h3>
+                    <p>Dogs need 30 minutes to 2 hours of exercise daily depending on breed and age. Start slowly with puppies and senior dogs.</p>
+                </div>
+                <div class="care-card">
+                    <i class="fas fa-brain"></i>
+                    <h3>Mental Stimulation</h3>
+                    <p>Use puzzle toys, training sessions, and scent games. Rotate toys regularly to maintain interest and prevent boredom.</p>
+                </div>
+                <div class="care-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Playtime</h3>
+                    <p>Interactive play strengthens bonds. Use appropriate toys for your pet's size. Supervise play with children and other pets.</p>
+                </div>
+                <div class="care-card">
+                    <i class="fas fa-sun"></i>
+                    <h3>Weather Considerations</h3>
+                    <p>Limit exercise in extreme weather. Provide indoor activities during bad weather. Always check pavement temperature before walks.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="emergency-section">
+        <h2>Emergency Care</h2>
+        <div class="emergency-grid">
+            <div class="emergency-card">
+                <i class="fas fa-phone-alt"></i>
+                <h4>Emergency Vet</h4>
+                <p>Keep your vet's emergency number handy. Know the location of 24-hour emergency clinics.</p>
+            </div>
+            <div class="emergency-card">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h4>Warning Signs</h4>
+                <p>Difficulty breathing, seizures, unconsciousness, severe bleeding, inability to urinate/defecate.</p>
+            </div>
+            <div class="emergency-card">
+                <i class="fas fa-first-aid"></i>
+                <h4>First Aid Kit</h4>
+                <p>Keep gauze, antiseptic, thermometer, emergency blanket, and pet first aid manual.</p>
+            </div>
+            <div class="emergency-card">
+                <i class="fas fa-car"></i>
+                <h4>Transport</h4>
+                <p>Transport injured pets carefully. Use blanket as stretcher for larger pets. Keep pet warm and calm.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="seasonal-care">
+        <h1 class="heading">Seasonal Care Tips</h1>
+        <div class="seasonal-grid">
+            <div class="seasonal-card">
+                <h3>🌸 Spring Care</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li>• Increase exercise as weather improves</li>
+                    <li>• Watch for seasonal allergies</li>
+                    <li>• Start flea and tick prevention</li>
+                    <li>• Schedule annual vet check-up</li>
+                </ul>
+            </div>
+            <div class="seasonal-card">
+                <h3>☀️ Summer Care</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li>• Provide plenty of fresh water</li>
+                    <li>• Exercise during cooler hours</li>
+                    <li>• Never leave pets in parked cars</li>
+                    <li>• Check pavement temperature</li>
+                </ul>
+            </div>
+            <div class="seasonal-card">
+                <h3>🍂 Fall Care</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li>• Adjust food portions for less activity</li>
+                    <li>• Watch for antifreeze spills</li>
+                    <li>• Keep school supplies out of reach</li>
+                    <li>• Prepare for holiday visitors</li>
+                </ul>
+            </div>
+            <div class="seasonal-card">
+                <h3>❄️ Winter Care</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li>• Provide warm bedding</li>
+                    <li>• Limit time outdoors</li>
+                    <li>• Watch for signs of hypothermia</li>
+                    <li>• Keep paws clean and dry</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="checklist">
+        <h3>📋 Daily Care Checklist</h3>
+        <div class="checklist-item">
+            <input type="checkbox" id="fresh-water">
+            <label for="fresh-water">Provide fresh, clean water</label>
+        </div>
+        <div class="checklist-item">
+            <input type="checkbox" id="feeding">
+            <label for="feeding">Feed appropriate portions</label>
+        </div>
+        <div class="checklist-item">
+            <input type="checkbox" id="exercise">
+            <label for="exercise">Provide exercise and playtime</label>
+        </div>
+        <div class="checklist-item">
+            <input type="checkbox" id="grooming">
+            <label for="grooming">Quick grooming check (eyes, ears, coat)</label>
+        </div>
+        <div class="checklist-item">
+            <input type="checkbox" id="interaction">
+            <label for="interaction">Spend quality time together</label>
+        </div>
+        <div class="checklist-item">
+            <input type="checkbox" id="clean-area">
+            <label for="clean-area">Clean food and water bowls, litter box</label>
+        </div>
+    </section>
+
+    <section class="footer">
+        <div class="footer-content">
+           <h3><i class="fa-solid fa-paw"></i>Snoutsy</h3> 
+           <p>Snoutsy is a trusted platform for buying, selling, and adopting pets. We connect verified users to ensure secure and responsible pet ownership.</p>
+           <ul class="socials">
+            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+            <li><a href="#"><i class="fa-brands fa-google"></i></a></li>
+            <li><a href="#"><i class="fa fa-youtube"></i></a></li>
+            <li><a href="#"><i class="fa fa-linkedin-square"></i></a></li>
+         </ul>
+        </div>
+    </section>
+    <div class="footer-bottom">
+       <p>copyright &copy;2023 <a href="#"></a>Snoutsy.</p>
+    </div>
+
+    <script src="https://kit.fontawesome.com/cb8535f973.js" crossorigin="anonymous"></script>
+    <script>
+        function showCategory(category) {
+            // Hide all content sections
+            document.querySelectorAll('.care-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected content
+            document.getElementById(category).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Add interactive checklist functionality
+        document.querySelectorAll('.checklist-item input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const label = this.nextElementSibling;
+                if (this.checked) {
+                    label.style.textDecoration = 'line-through';
+                    label.style.opacity = '0.7';
+                } else {
+                    label.style.textDecoration = 'none';
+                    label.style.opacity = '1';
+                }
+            });
+        });
+
+        // Save checklist state to localStorage
+        function saveChecklistState() {
+            const checklistState = {};
+            document.querySelectorAll('.checklist-item input[type="checkbox"]').forEach(checkbox => {
+                checklistState[checkbox.id] = checkbox.checked;
+            });
+            localStorage.setItem('petCareChecklist', JSON.stringify(checklistState));
+        }
+
+        // Load checklist state from localStorage
+        function loadChecklistState() {
+            const savedState = localStorage.getItem('petCareChecklist');
+            if (savedState) {
+                const checklistState = JSON.parse(savedState);
+                Object.keys(checklistState).forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox) {
+                        checkbox.checked = checklistState[id];
+                        if (checklistState[id]) {
+                            const label = checkbox.nextElementSibling;
+                            label.style.textDecoration = 'line-through';
+                            label.style.opacity = '0.7';
+                        }
+                    }
+                });
+            }
+        }
+
+        // Add event listeners to save checklist state
+        document.querySelectorAll('.checklist-item input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', saveChecklistState);
+        });
+
+        // Load saved state when page loads
+        document.addEventListener('DOMContentLoaded', loadChecklistState);
+    </script>
+    <script src="../js/script.js"></script>
+</body>
+</html>
