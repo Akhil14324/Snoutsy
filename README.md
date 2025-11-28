@@ -52,4 +52,4 @@ If you've cloned this repository and Google login isn't working, you need to add
 3. Make sure `localhost` is added to Firebase authorized domains
 4. Click "Sign in with Google" button
 
-## Website Output
+
